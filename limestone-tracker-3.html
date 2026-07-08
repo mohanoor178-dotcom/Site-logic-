@@ -1,0 +1,1598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="Limestone" />
+<meta name="theme-color" content="#2B2622" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="application-name" content="SiteLogic" />
+<link rel="manifest" href="data:application/json,{
+  &quot;name&quot;:&quot;SiteLogic — Limestone Tracker&quot;,
+  &quot;short_name&quot;:&quot;SiteLogic&quot;,
+  &quot;start_url&quot;:&quot;.&quot;,
+  &quot;display&quot;:&quot;standalone&quot;,
+  &quot;background_color&quot;:&quot;#1A1208&quot;,
+  &quot;theme_color&quot;:&quot;#2B2622&quot;,
+  &quot;icons&quot;:[{&quot;src&quot;:&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpolygon points='50,5 95,27.5 95,72.5 50,95 5,72.5 5,27.5' fill='%23D4A04C'/%3E%3Cpolygon points='50,15 85,32.5 85,67.5 50,85 15,67.5 15,32.5' fill='%231A1208'/%3E%3Ctext x='50' y='58' font-family='Arial' font-weight='bold' font-size='28' fill='%23D4A04C' text-anchor='middle'%3ESL%3C/text%3E%3C/svg%3E&quot;,&quot;sizes&quot;:&quot;192x192&quot;,&quot;type&quot;:&quot;image/svg+xml&quot;}]
+}" />
+<title>SiteLogic — Limestone Tracker</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap');
+:root {
+  --basalt:#2B2622; --gold:#D4A04C; --gold-dark:#B8842F; --dust:#8B9388;
+  --cream:#F5F0E6; --paper:#FFFCF5; --terracotta:#C45B3E; --moss:#5C7A52; --line:#E3D9C4;
+  --blue:#6B98C7; --blue-dark:#335E8C;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{overscroll-behavior-x:none;}
+body{background:var(--basalt);font-family:'Oswald',sans-serif;color:var(--basalt);min-height:100vh;overflow-x:hidden;}
+.topbar{background:var(--basalt);padding:48px 18px 14px;position:sticky;top:0;z-index:50;border-bottom:1px solid #463E36;}
+.topbar-eyebrow{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:0.25em;color:var(--gold);text-transform:uppercase;}
+.topbar-title{font-size:22px;font-weight:700;color:var(--cream);letter-spacing:0.02em;margin-top:2px;text-transform:uppercase;}
+.topbar-sub{font-size:11px;color:#A89A86;margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.banner{margin:14px 16px 4px;background:var(--paper);border-radius:4px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center;border-left:5px solid var(--moss);box-shadow:0 2px 8px rgba(0,0,0,0.15);}
+.banner.loss{border-left-color:var(--terracotta);}
+.banner-amt{font-size:21px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.banner-amt.pos{color:var(--moss);}
+.banner-amt.neg{color:var(--terracotta);}
+.banner-label{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:#9A8E78;margin-bottom:2px;}
+.banner-sub{font-size:10px;color:#9A8E78;text-align:right;font-family:'JetBrains Mono',monospace;}
+.deck-rail{display:flex;gap:8px;padding:14px 16px 4px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.deck-rail::-webkit-scrollbar{display:none;}
+.deck-tab{flex-shrink:0;padding:9px 16px;border-radius:20px;border:1.5px solid #5A5048;background:transparent;color:#C9BDA9;font-family:'Oswald',sans-serif;font-size:12px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;cursor:pointer;white-space:nowrap;}
+.deck-tab.active{background:var(--gold);border-color:var(--gold);color:var(--basalt);}
+.co-rail{display:flex;gap:8px;padding:12px 16px 6px;overflow-x:auto;}
+.co-rail::-webkit-scrollbar{display:none;}
+.co-card{flex:1;min-width:140px;background:var(--paper);border-radius:6px;padding:12px 14px;border:2px solid var(--line);cursor:pointer;text-align:left;}
+.co-card.active.moyan{border-color:var(--gold);background:#FFF8E9;}
+.co-card.active.hydar{border-color:var(--blue);background:#EEF5FC;}
+.co-card-name{font-size:15px;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;}
+.co-card.moyan .co-card-name{color:var(--gold-dark);}
+.co-card.hydar .co-card-name{color:var(--blue-dark);}
+.co-card-tag{font-family:'JetBrains Mono',monospace;font-size:9px;color:#9A8E78;margin-top:2px;text-transform:uppercase;letter-spacing:0.08em;}
+.day-rail{display:flex;gap:8px;padding:4px 16px 14px;overflow-x:auto;-webkit-overflow-scrolling:touch;}
+.day-rail::-webkit-scrollbar{display:none;}
+.day-chip{flex-shrink:0;width:64px;padding:10px 4px;border-radius:8px;border:1.5px solid var(--line);background:var(--paper);text-align:center;cursor:pointer;}
+.day-chip.active{background:var(--basalt);border-color:var(--basalt);}
+.day-chip.active .day-chip-name{color:var(--gold);}
+.day-chip.has-data:not(.active){border-color:var(--moss);}
+.day-chip-name{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--basalt);}
+.day-chip-dot{width:5px;height:5px;border-radius:50%;background:var(--moss);margin:4px auto 0;opacity:0;}
+.day-chip.has-data .day-chip-dot{opacity:1;}
+.panel{padding:0 16px 24px;}
+.card{background:var(--paper);border-radius:6px;border:1px solid var(--line);padding:16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,0.04);}
+.card-title{font-size:11px;font-weight:700;letter-spacing:0.14em;color:#9A8E78;text-transform:uppercase;margin-bottom:12px;font-family:'JetBrains Mono',monospace;}
+.field{margin-bottom:14px;}
+.field label{display:block;font-size:10px;font-weight:600;color:#9A8E78;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:5px;font-family:'JetBrains Mono',monospace;}
+.input-wrap{display:flex;align-items:center;background:#fff;border:1.5px solid var(--line);border-radius:5px;overflow:hidden;}
+.input-wrap input,.input-wrap select{flex:1;padding:11px 13px;border:none;outline:none;font-size:16px;font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--basalt);background:transparent;width:100%;}
+.input-wrap .unit{padding:0 12px;font-size:11px;color:#9A8E78;font-weight:600;border-left:1px solid var(--line);background:#FAF6EC;white-space:nowrap;font-family:'JetBrains Mono',monospace;}
+.field-hint{font-size:11px;color:#9A8E78;margin-top:4px;font-family:'JetBrains Mono',monospace;}
+/* TICKET */
+.ticket{position:relative;background:#fff;border-radius:3px;padding:14px 16px 16px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,0.1);border-top:4px solid transparent;}
+.ticket.client-bamburi{border-top-color:var(--gold);}
+.ticket.client-savannah{border-top-color:var(--blue);}
+.ticket-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;padding-bottom:10px;border-bottom:1px dashed var(--line);}
+.ticket-no{font-family:'JetBrains Mono',monospace;font-size:9px;color:#9A8E78;letter-spacing:0.05em;}
+.ticket-datetime{font-family:'JetBrains Mono',monospace;font-size:9px;color:#9A8E78;margin-top:2px;}
+.ticket-client{font-size:13px;font-weight:700;text-transform:uppercase;}
+.ticket-client.bamburi{color:var(--gold-dark);}
+.ticket-client.savannah{color:var(--blue-dark);}
+.ticket-type{display:inline-block;font-size:9px;font-weight:700;padding:2px 6px;border-radius:10px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;margin-top:3px;}
+.ticket-type.dumper{background:#FFF8E9;color:var(--gold-dark);border:1px solid var(--gold);}
+.ticket-type.trailer{background:#EEF5FC;color:var(--blue-dark);border:1px solid var(--blue);}
+.ticket-remove{background:none;border:none;color:#C9BDA9;font-size:20px;cursor:pointer;line-height:1;padding:4px;}
+.ticket-row{display:flex;gap:8px;margin-bottom:8px;}
+.ticket-row>div{flex:1;}
+.ticket-row label{display:block;font-size:9px;font-weight:600;color:#9A8E78;text-transform:uppercase;margin-bottom:4px;font-family:'JetBrains Mono',monospace;letter-spacing:0.06em;}
+.ticket-row input,.ticket-row select{width:100%;padding:8px 10px;border:1.5px solid var(--line);border-radius:4px;font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:600;color:var(--basalt);background:#FAF6EC;outline:none;}
+.ticket-stub{margin-top:10px;padding:10px 12px;background:var(--cream);border-radius:4px;font-family:'JetBrains Mono',monospace;}
+.ticket-stub-row{display:flex;justify-content:space-between;font-size:11px;padding:2px 0;color:#6B6155;}
+.ticket-stub-row b{color:var(--basalt);font-weight:700;}
+.ticket-stub-row.divider{border-top:1px dashed #C9BDA9;margin-top:4px;padding-top:6px;}
+.ticket-stub-row.pay b{color:var(--moss);font-size:13px;}
+.ticket-stub-row.recover b{color:var(--terracotta);font-size:13px;}
+.add-rail{display:flex;gap:8px;margin-top:4px;flex-wrap:wrap;}
+.add-btn{flex:1;min-width:120px;padding:12px 6px;background:transparent;border-radius:6px;cursor:pointer;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;font-family:'Oswald',sans-serif;}
+.add-btn.bamburi{border:1.5px dashed var(--gold);color:var(--gold-dark);}
+.add-btn.savannah{border:1.5px dashed var(--blue);color:var(--blue-dark);}
+.day-summary{background:var(--basalt);border-radius:6px;padding:12px 14px;margin-top:12px;}
+.day-sum-row{display:flex;justify-content:space-between;font-size:11px;padding:4px 0;font-family:'JetBrains Mono',monospace;}
+.day-sum-row span:first-child{color:#A89A86;}
+.day-sum-row span:last-child{color:var(--gold);font-weight:700;}
+.pl-row{display:flex;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px dashed var(--line);}
+.pl-label{font-size:12px;color:#6B6155;font-family:'JetBrains Mono',monospace;}
+.pl-label.bold{color:var(--basalt);font-weight:700;}
+.pl-label small{display:block;font-size:10px;color:#9A8E78;margin-top:2px;font-weight:400;}
+.pl-value{font-size:13px;color:var(--basalt);font-weight:700;font-family:'JetBrains Mono',monospace;white-space:nowrap;}
+.pl-total{border-top:2px solid var(--gold)!important;border-bottom:none!important;}
+.pl-net{display:flex;justify-content:space-between;padding:12px 0 4px;}
+.pl-net span{font-size:17px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.target-wrap{background:var(--cream);border-radius:6px;padding:12px 14px;margin-bottom:14px;border:1px solid var(--line);}
+.target-head{display:flex;justify-content:space-between;font-size:11px;margin-bottom:8px;font-family:'JetBrains Mono',monospace;font-weight:700;}
+.target-track{height:8px;background:#E3D9C4;border-radius:4px;overflow:hidden;}
+.target-fill{height:100%;border-radius:4px;transition:width 0.4s;background:var(--moss);}
+.target-fill.under{background:var(--gold);}
+.target-sub{font-size:10px;color:#9A8E78;margin-top:6px;font-family:'JetBrains Mono',monospace;}
+.hist-card{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:14px 16px;margin-bottom:12px;}
+.hist-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.hist-pill{display:inline-block;font-size:10px;font-weight:700;padding:3px 10px;border-radius:12px;text-transform:uppercase;font-family:'JetBrains Mono',monospace;}
+.hist-pill.moyan{background:#FFF8E9;color:var(--gold-dark);border:1px solid var(--gold);}
+.hist-pill.hydar{background:#EEF5FC;color:var(--blue-dark);border:1px solid var(--blue);}
+.hist-date{font-size:10px;color:#9A8E78;font-family:'JetBrains Mono',monospace;}
+.hist-row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0;border-bottom:1px dashed var(--line);font-family:'JetBrains Mono',monospace;}
+.hist-row:last-child{border-bottom:none;}
+.hist-row span:first-child{color:#9A8E78;}
+.hist-row span:last-child{font-weight:700;color:var(--basalt);}
+.hist-profit{font-size:15px;font-weight:700;font-family:'JetBrains Mono',monospace;}
+.hist-profit.pos{color:var(--moss);}
+.hist-profit.neg{color:var(--terracotta);}
+.month-stat{text-align:center;flex:1;}
+.month-stat-val{font-size:17px;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--basalt);}
+.month-stat-label{font-size:9px;color:#9A8E78;text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;font-family:'JetBrains Mono',monospace;}
+.wa-btn{width:100%;padding:13px;background:#25D366;border:none;border-radius:6px;cursor:pointer;font-size:13px;color:#fff;font-weight:700;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:0.04em;}
+.pdf-btn{width:100%;padding:13px;background:var(--basalt);border:none;border-radius:6px;cursor:pointer;font-size:13px;color:var(--gold);font-weight:700;margin-top:10px;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:0.04em;}
+.reset-btn{width:100%;padding:11px;background:transparent;border:1.5px solid var(--terracotta);border-radius:6px;cursor:pointer;font-size:11px;color:var(--terracotta);font-weight:700;margin-top:12px;font-family:'Oswald',sans-serif;text-transform:uppercase;letter-spacing:0.04em;}
+.empty{text-align:center;padding:32px 0;color:#9A8E78;font-size:13px;font-family:'JetBrains Mono',monospace;}
+.footer{text-align:center;font-size:10px;color:#6B6155;padding:18px 0 32px;font-family:'JetBrains Mono',monospace;letter-spacing:0.04em;}
+.constants-list{background:var(--cream);border-radius:6px;padding:12px 14px;margin-top:14px;}
+.const-row{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px dashed var(--line);font-size:11px;font-family:'JetBrains Mono',monospace;}
+.const-row:last-child{border-bottom:none;}
+.const-row span:first-child{color:#9A8E78;}
+.const-row span:last-child{color:var(--basalt);font-weight:700;}
+.checkbox-row{display:flex;align-items:center;gap:8px;cursor:pointer;}
+.checkbox-row input{width:18px;height:18px;accent-color:var(--gold-dark);}
+.checkbox-row span{text-transform:none;font-size:13px;color:var(--basalt);font-weight:600;font-family:'Oswald',sans-serif;}
+
+/* ── INVENTORY ── */
+.inv-section { padding: 0 16px 24px; }
+.inv-card { background: var(--paper); border: 1px solid var(--line); border-radius: 8px; padding: 14px 16px; margin-bottom: 14px; }
+.inv-title { font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: #9A8E78; text-transform: uppercase; margin-bottom: 12px; font-family: 'JetBrains Mono', monospace; }
+.inv-stock-bar-wrap { margin: 10px 0; }
+.inv-stock-bar { height: 12px; background: #E3D9C4; border-radius: 6px; overflow: hidden; }
+.inv-stock-fill { height: 100%; border-radius: 6px; transition: width 0.4s; }
+.inv-stock-fill.good { background: var(--moss); }
+.inv-stock-fill.medium { background: var(--gold); }
+.inv-stock-fill.low { background: var(--terracotta); }
+.inv-stat-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.inv-stat { flex: 1; background: var(--cream); border-radius: 6px; padding: 10px 12px; text-align: center; }
+.inv-stat-val { font-size: 16px; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--basalt); }
+.inv-stat-label { font-size: 9px; color: #9A8E78; text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; font-family: 'JetBrains Mono', monospace; }
+.inv-purchase-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px dashed var(--line); }
+.inv-purchase-row:last-child { border-bottom: none; }
+.inv-purchase-info { font-size: 12px; font-family: 'JetBrains Mono', monospace; }
+.inv-purchase-date { font-size: 10px; color: #9A8E78; margin-top: 2px; }
+.inv-roi { font-size: 11px; color: var(--moss); font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+.inv-roi.loss { color: var(--terracotta); }
+.inv-add-row { display: flex; gap: 8px; margin-top: 12px; }
+.inv-add-input { flex: 1; padding: 10px 12px; background: #fff; border: 1.5px solid var(--line); border-radius: 6px; font-size: 15px; font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--basalt); outline: none; }
+.inv-add-btn { padding: 10px 16px; background: var(--gold); border: none; border-radius: 6px; font-size: 12px; font-weight: 700; color: var(--basalt); cursor: pointer; font-family: 'Oswald', sans-serif; text-transform: uppercase; white-space: nowrap; }
+.inv-del-btn { background: none; border: none; color: #C9BDA9; font-size: 18px; cursor: pointer; padding: 2px 6px; }
+.inv-alert { background: #FDE8E8; border: 1.5px solid var(--terracotta); border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; font-size: 12px; color: var(--terracotta); font-family: 'JetBrains Mono', monospace; font-weight: 700; }
+
+/* ── AI ADVISOR ── */
+.ai-wrap { padding: 0 16px 24px; }
+.ai-header { background: linear-gradient(135deg, #1A1208 0%, #2B2622 100%); border-radius: 10px; padding: 18px; margin-bottom: 14px; border: 1px solid #D4A04C; position: relative; overflow: hidden; }
+.ai-header::before { content: ''; position: absolute; top: -30px; right: -30px; width: 100px; height: 100px; background: radial-gradient(circle, rgba(212,160,76,0.15) 0%, transparent 70%); }
+.ai-header-title { font-size: 16px; font-weight: 700; color: #D4A04C; text-transform: uppercase; letter-spacing: 0.05em; }
+.ai-header-sub { font-size: 11px; color: #8B9388; margin-top: 4px; font-family: 'JetBrains Mono', monospace; }
+.ai-messages { min-height: 200px; margin-bottom: 14px; }
+.ai-msg { margin-bottom: 12px; display: flex; gap: 10px; align-items: flex-start; animation: msgFade 0.3s ease; }
+@keyframes msgFade { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:translateY(0); } }
+.ai-msg.user { flex-direction: row-reverse; }
+.ai-avatar { width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; }
+.ai-avatar.bot { background: linear-gradient(135deg, #D4A04C, #B8842F); color: #1A1208; }
+.ai-avatar.user { background: #2B2622; color: #D4A04C; border: 1px solid #D4A04C; font-size: 10px; }
+.ai-bubble { max-width: 80%; padding: 10px 14px; border-radius: 10px; font-size: 13px; line-height: 1.6; }
+.ai-bubble.bot { background: var(--paper); border: 1px solid var(--line); color: var(--basalt); border-bottom-left-radius: 3px; font-family: system-ui, sans-serif; }
+.ai-bubble.user { background: #2B2622; color: #F5F0E6; border-bottom-right-radius: 3px; font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+.ai-bubble.thinking { color: #9A8E78; font-style: italic; font-family: 'JetBrains Mono', monospace; font-size: 11px; }
+.ai-input-wrap { display: flex; gap: 8px; align-items: flex-end; }
+.ai-input { flex: 1; padding: 12px 14px; background: var(--paper); border: 1.5px solid var(--line); border-radius: 8px; font-size: 14px; color: var(--basalt); outline: none; font-family: system-ui, sans-serif; resize: none; min-height: 46px; max-height: 120px; }
+.ai-input:focus { border-color: #D4A04C; }
+.ai-send { width: 46px; height: 46px; background: #D4A04C; border: none; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.ai-send:disabled { background: #5A5048; cursor: not-allowed; }
+.ai-send svg { width: 20px; height: 20px; fill: #1A1208; }
+.ai-suggestions { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+.ai-chip { padding: 6px 12px; background: var(--paper); border: 1px solid var(--line); border-radius: 16px; font-size: 11px; color: #6B6155; cursor: pointer; font-family: 'JetBrains Mono', monospace; white-space: nowrap; }
+.ai-chip:hover { border-color: #D4A04C; color: #B8842F; }
+.ai-clear { font-size: 10px; color: #6B6155; text-align: right; cursor: pointer; font-family: 'JetBrains Mono', monospace; margin-bottom: 8px; text-decoration: underline; }
+
+/* ── SPLASH SCREEN ── */
+#splash {
+  position: fixed; inset: 0; background: #1A1208; z-index: 9999;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  animation: splashFadeOut 0.6s ease-in-out 3s forwards;
+}
+@keyframes splashFadeOut {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.04); pointer-events: none; }
+}
+.splash-logo-wrap {
+  position: relative; display: flex; align-items: center; justify-content: center;
+  margin-bottom: 32px;
+  animation: logoReveal 0.8s cubic-bezier(0.16,1,0.3,1) 0.3s both;
+}
+@keyframes logoReveal {
+  from { opacity: 0; transform: translateY(30px) scale(0.9); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.splash-hexagon {
+  width: 110px; height: 110px; position: relative;
+}
+.splash-hex-bg {
+  width: 100%; height: 100%;
+  background: linear-gradient(135deg, #D4A04C 0%, #B8842F 50%, #8B6020 100%);
+  clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 0 40px rgba(212,160,76,0.4), 0 0 80px rgba(212,160,76,0.15);
+}
+.splash-hex-inner {
+  width: 85%; height: 85%;
+  background: #1A1208;
+  clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+  display: flex; align-items: center; justify-content: center; flex-direction: column;
+}
+.splash-sl {
+  font-size: 28px; font-weight: 700; color: #D4A04C; letter-spacing: -0.02em; line-height: 1;
+}
+.splash-sl-sub {
+  font-size: 8px; letter-spacing: 0.25em; color: #8B6020; text-transform: uppercase; margin-top: 2px;
+}
+.splash-ring {
+  position: absolute; inset: -8px;
+  border: 2px solid rgba(212,160,76,0.3);
+  clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+  animation: ringPulse 2s ease-in-out 0.5s infinite;
+}
+.splash-ring2 {
+  position: absolute; inset: -16px;
+  border: 1px solid rgba(212,160,76,0.15);
+  clip-path: polygon(50% 0%, 95% 25%, 95% 75%, 50% 100%, 5% 75%, 5% 25%);
+  animation: ringPulse 2s ease-in-out 0.8s infinite;
+}
+@keyframes ringPulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.02); }
+}
+.splash-name {
+  font-size: 38px; font-weight: 700; color: #F5F0E6; letter-spacing: 0.08em;
+  text-transform: uppercase;
+  animation: textReveal 0.8s cubic-bezier(0.16,1,0.3,1) 0.7s both;
+}
+.splash-name span { color: #D4A04C; }
+@keyframes textReveal {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.splash-tagline {
+  font-family: 'JetBrains Mono', monospace; font-size: 11px;
+  color: #6B6155; letter-spacing: 0.2em; text-transform: uppercase;
+  margin-top: 8px;
+  animation: textReveal 0.8s cubic-bezier(0.16,1,0.3,1) 1s both;
+}
+.splash-divider {
+  width: 60px; height: 2px;
+  background: linear-gradient(90deg, transparent, #D4A04C, transparent);
+  margin: 24px 0;
+  animation: textReveal 0.8s ease 1.2s both;
+}
+.splash-powered {
+  font-family: 'JetBrains Mono', monospace; font-size: 9px;
+  color: #463E36; letter-spacing: 0.15em; text-transform: uppercase;
+  animation: textReveal 0.8s ease 1.4s both;
+}
+.splash-loader {
+  position: absolute; bottom: 48px; left: 50%; transform: translateX(-50%);
+  display: flex; gap: 6px;
+  animation: textReveal 0.5s ease 1.6s both;
+}
+.splash-dot {
+  width: 5px; height: 5px; border-radius: 50%; background: #463E36;
+}
+.splash-dot:nth-child(1) { animation: dotPulse 1.2s ease-in-out 1.8s infinite; }
+.splash-dot:nth-child(2) { animation: dotPulse 1.2s ease-in-out 2.0s infinite; }
+.splash-dot:nth-child(3) { animation: dotPulse 1.2s ease-in-out 2.2s infinite; }
+@keyframes dotPulse {
+  0%, 100% { background: #463E36; transform: scale(1); }
+  50% { background: #D4A04C; transform: scale(1.4); }
+}
+</style>
+</head>
+<body>
+<!-- SPLASH SCREEN -->
+<div id="splash">
+  <div class="splash-logo-wrap">
+    <div class="splash-hexagon">
+      <div class="splash-hex-bg">
+        <div class="splash-hex-inner">
+          <div class="splash-sl">SL</div>
+          <div class="splash-sl-sub">Site</div>
+        </div>
+      </div>
+      <div class="splash-ring"></div>
+      <div class="splash-ring2"></div>
+    </div>
+  </div>
+  <div class="splash-name">Site<span>Logic</span></div>
+  <div class="splash-tagline">Quarry Operations Platform</div>
+  <div class="splash-divider"></div>
+  <div class="splash-powered" id="splash-year">Built by Mohanoor Technologies</div>
+  <div class="splash-loader">
+    <div class="splash-dot"></div>
+    <div class="splash-dot"></div>
+    <div class="splash-dot"></div>
+  </div>
+</div>
+
+<div class="topbar">
+  <div class="topbar-eyebrow">SiteLogic · Quarry Operations Platform</div>
+  <div class="topbar-title">Limestone Tracker</div>
+  <div class="topbar-sub">moyan · hydar — bamburi & savannah</div>
+</div>
+<div id="app"></div>
+<script>
+const RAW_TONS_PER_TRUCK = 17;
+const DUST_TONS_PER_TRUCK = 17; // corrected: 17 tons per dust truck
+const BAMBURI_LIMESTONE_TONS = 5;
+const DUMPER_CESS = 2500;
+const TRAILER_CESS = 5000;
+const DAYS = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+const COMPANIES = [{id:"moyan",name:"Moyan"},{id:"hydar",name:"Hydar"}];
+
+let state = {
+  tab:"daily", selectedCompany:"moyan", selectedDay:0,
+  daysInMonth:22, workedBefore:0, transportRateBamburi:950,
+  transportRateSavannah:1000,
+  limestoneCostPerTruck:11500,
+  dustCostPerTruck:5500,
+  limestoneTonsPerTruck:17,
+  dustTonsPerTruck:17,
+  salaries:190000, electricity:74000,
+  prices:{moyan_bamburi:1830,moyan_savannah:2500,hydar_bamburi:1830,hydar_savannah:2500},
+  bamburiTargets:{moyan:0,hydar:0},
+  hydarBamburiEnabled:false,
+  // Site-level incoming (shared across all companies)
+  siteWeek: DAYS.map(()=>({incomingTrucks:"",dustTrucks:"",loggedAt:""})),
+  week:{
+    moyan:DAYS.map(()=>({deliveryTrucks:[],loggedAt:""})),
+    hydar:DAYS.map(()=>({deliveryTrucks:[],loggedAt:""}))
+  },
+  history:[],
+  aiMessages:[],
+  aiLoading:false,
+  // Inventory
+  dustStock:{ purchases:[], totalReceived:0 },
+  limestoneStock:{ purchases:[], totalReceived:0 }
+};
+
+function save(){
+  try{
+    localStorage.setItem("ls-week-v6",JSON.stringify(state.week));
+    localStorage.setItem("ls-site-v6",JSON.stringify(state.siteWeek));
+    localStorage.setItem("ls-meta-v6",JSON.stringify({
+      daysInMonth:state.daysInMonth,workedBefore:state.workedBefore,
+      transportRateBamburi:state.transportRateBamburi,
+      transportRateSavannah:state.transportRateSavannah,
+      limestoneCostPerTruck:state.limestoneCostPerTruck,
+      dustCostPerTruck:state.dustCostPerTruck,
+      limestoneTonsPerTruck:state.limestoneTonsPerTruck,
+      dustTonsPerTruck:state.dustTonsPerTruck,
+      prices:state.prices,
+      bamburiTargets:state.bamburiTargets,hydarBamburiEnabled:state.hydarBamburiEnabled,
+      salaries:state.salaries,electricity:state.electricity
+    }));
+    localStorage.setItem("ls-history-v6",JSON.stringify(state.history));
+    localStorage.setItem("ls-ai-v6",JSON.stringify(state.aiMessages.slice(-20)));
+    localStorage.setItem("ls-inv-v6",JSON.stringify({dustStock:state.dustStock,limestoneStock:state.limestoneStock}));
+  }catch(e){}
+}
+function load(){
+  try{
+    const w=localStorage.getItem("ls-week-v6");
+    if(w)state.week=JSON.parse(w);
+    const sw=localStorage.getItem("ls-site-v6");
+    if(sw)state.siteWeek=JSON.parse(sw);
+    const m=localStorage.getItem("ls-meta-v6");
+    if(m){
+      const meta=JSON.parse(m);
+      state.daysInMonth=meta.daysInMonth||22;
+      state.workedBefore=meta.workedBefore||0;
+      state.transportRateBamburi=meta.transportRateBamburi||950;
+      state.transportRateSavannah=meta.transportRateSavannah||1000;
+      state.limestoneCostPerTruck=meta.limestoneCostPerTruck||11500;
+      state.dustCostPerTruck=meta.dustCostPerTruck||5500;
+      state.limestoneTonsPerTruck=meta.limestoneTonsPerTruck||17;
+      state.dustTonsPerTruck=meta.dustTonsPerTruck||17;
+      state.salaries=meta.salaries||190000;
+      state.electricity=meta.electricity||74000;
+      if(meta.prices)state.prices=meta.prices;
+      if(meta.bamburiTargets)state.bamburiTargets=meta.bamburiTargets;
+      state.hydarBamburiEnabled=meta.hydarBamburiEnabled||false;
+    }
+    const h=localStorage.getItem("ls-history-v6");
+    if(h)state.history=JSON.parse(h);
+    const ai=localStorage.getItem("ls-ai-v6");
+    if(ai)state.aiMessages=JSON.parse(ai);
+    const inv=localStorage.getItem("ls-inv-v6");
+    if(inv){const i=JSON.parse(inv);state.dustStock=i.dustStock||{purchases:[],totalReceived:0};state.limestoneStock=i.limestoneStock||{purchases:[],totalReceived:0};}
+  }catch(e){}
+}
+
+function fmt(n){return "KES "+Math.round(n||0).toLocaleString("en-KE");}
+function fmtT(n){return Number(n||0).toFixed(2);}
+function priceFor(company,client){return state.prices[`${company}_${client}`]||0;}
+function companyMeta(id){return COMPANIES.find(c=>c.id===id);}
+function availableClients(cid){
+  if(cid==="hydar")return state.hydarBamburiEnabled?["bamburi","savannah"]:["savannah"];
+  return["bamburi","savannah"];
+}
+function monthlyFixed(){return (state.salaries||0)+(state.electricity||0);}
+function nowStamp(){
+  const d=new Date();
+  return d.toLocaleDateString("en-KE",{day:"2-digit",month:"short",year:"numeric"})+" "+d.toLocaleTimeString("en-KE",{hour:"2-digit",minute:"2-digit"});
+}
+function cessFor(truckType){return truckType==="trailer"?TRAILER_CESS:DUMPER_CESS;}
+
+function calcTruck(company,t){
+  const isBamburi=t.client==="bamburi";
+  const rate=isBamburi?(state.transportRateBamburi||950):(state.transportRateSavannah||1000);
+  const limestoneCostPerTruck=state.limestoneCostPerTruck||11500;
+  const dustCostPerTon=Math.round((state.dustCostPerTruck||5500)/(state.dustTonsPerTruck||17));
+  const cess=cessFor(t.truckType);
+  const fuel=parseFloat(t.fuel)||0;
+  const totalAdvance=cess+fuel;
+  if(isBamburi){
+    const limestoneTons=BAMBURI_LIMESTONE_TONS;
+    const totalDelivered=parseFloat(t.bridgeTons)||0;
+    const dustTons=Math.max(0,totalDelivered-limestoneTons);
+    const limestoneCostShare=Math.round((limestoneTons/(state.limestoneTonsPerTruck||17))*limestoneCostPerTruck);
+    const dustCost=Math.round(dustTons*dustCostPerTon);
+    const price=priceFor(company,"bamburi");
+    const revenue=Math.round(totalDelivered*price);
+    const transportCost=Math.round(totalDelivered*rate);
+    const fridayTopup=Math.round(Math.max(0,transportCost-totalAdvance));
+    const overpaid=transportCost<totalAdvance?totalAdvance-transportCost:0;
+    const variableCost=limestoneCostShare+dustCost+transportCost;
+    const grossProfit=revenue-variableCost;
+    return{isBamburi:true,totalDelivered,limestoneTons,dustTons,revenue,limestoneCostShare,dustCost,transportCost,cess,fuel,totalAdvance,fridayTopup,overpaid,variableCost,grossProfit,price};
+  }else{
+    const tons=parseFloat(t.tons)||0;
+    const limestoneCostShare=Math.round((tons/(state.limestoneTonsPerTruck||17))*limestoneCostPerTruck);
+    const price=priceFor(company,"savannah");
+    const revenue=Math.round(tons*price);
+    const transportCost=Math.round(tons*rate);
+    const fridayTopup=Math.round(Math.max(0,transportCost-totalAdvance));
+    const overpaid=transportCost<totalAdvance?totalAdvance-transportCost:0;
+    const variableCost=limestoneCostShare+transportCost;
+    const grossProfit=revenue-variableCost;
+    return{isBamburi:false,totalDelivered:tons,limestoneTons:tons,dustTons:0,revenue,limestoneCostShare,dustCost:0,transportCost,cess,fuel,totalAdvance,fridayTopup,overpaid,variableCost,grossProfit,price};
+  }
+}
+
+function calcDay(company,day,dayIdx){
+  // Incoming is site-level, not per company
+  const siteDay=state.siteWeek[dayIdx]||{};
+  const incoming=parseFloat(siteDay.incomingTrucks)||0;
+  const dustTrucks=parseFloat(siteDay.dustTrucks)||0;
+  const limestoneCost=incoming*(state.limestoneCostPerTruck||11500);
+  let bamburiTons=0,savannahTons=0,totalRev=0,totalTransport=0,totalAdvances=0,totalFridayTopups=0,totalDustCost=0,bamburiTrucks=0,savannahTrucks=0;
+  day.deliveryTrucks.forEach(t=>{
+    const c=calcTruck(company,t);
+    totalRev+=c.revenue;totalTransport+=c.transportCost;totalAdvances+=c.totalAdvance;totalFridayTopups+=c.fridayTopup;
+    if(t.client==="bamburi"){bamburiTons+=c.totalDelivered;bamburiTrucks++;totalDustCost+=c.dustCost;}
+    else{savannahTons+=c.totalDelivered;savannahTrucks++;}
+  });
+  return{incoming,dustTrucks,limestoneCost,bamburiTons,savannahTons,totalTons:bamburiTons+savannahTons,totalRev,totalTransport,totalAdvances,totalFridayTopups,totalDustCost,bamburiTrucks,savannahTrucks,numDelivery:day.deliveryTrucks.length};
+}
+
+function calcCompanyWeek(cid){
+  const days=state.week[cid].map((d,i)=>calcDay(cid,d,i));
+  const sum=k=>days.reduce((s,d)=>s+(d[k]||0),0);
+  const totalIncoming=sum("incoming");
+  const totalLimestone=sum("limestoneCost");
+  const totalDustCost=sum("totalDustCost");
+  const totalBamburiTons=sum("bamburiTons");
+  const totalSavannahTons=sum("savannahTons");
+  const totalTons=sum("totalTons");
+  const totalRev=sum("totalRev");
+  const totalTransport=sum("totalTransport");
+  const totalAdvances=sum("totalAdvances");
+  const totalFridayTopups=sum("totalFridayTopups");
+  const totalBamburiTrucks=sum("bamburiTrucks");
+  const totalSavannahTrucks=sum("savannahTrucks");
+  // Dust strategy breakdown
+  let totalDustTonsSold = 0;
+  state.week[cid].forEach(day => {
+    day.deliveryTrucks.forEach(t => {
+      if(t.client === "bamburi") {
+        const bridge = parseFloat(t.bridgeTons) || 0;
+        totalDustTonsSold += Math.max(0, bridge - BAMBURI_LIMESTONE_TONS);
+      }
+    });
+  });
+  const dustCostPerTon = (state.dustCostPerTruck||5500) / DUST_TONS_PER_TRUCK;
+  const dustBuyingCost = Math.round(totalDustTonsSold * dustCostPerTon);
+  const dustSellingRevenue = Math.round(totalDustTonsSold * priceFor(cid, 'bamburi'));
+  const dustNetProfit = dustSellingRevenue - dustBuyingCost;
+  const daysWorked=days.filter(d=>d.incoming>0||d.numDelivery>0).length;
+  const mf=monthlyFixed();
+  const dailyFixed=state.daysInMonth>0?mf/state.daysInMonth:0;
+  // Split fixed costs by tonnage ratio across all companies
+  const allCompaniesTons = COMPANIES.reduce((sum, c) => {
+    if(c.id === cid) return sum + totalTons;
+    const otherDays = state.week[c.id].map((d,i) => calcDay(c.id, d, i));
+    return sum + otherDays.reduce((s,d) => s+(d.totalTons||0), 0);
+  }, 0);
+  const tonRatio = allCompaniesTons > 0 ? totalTons / allCompaniesTons : 1;
+  const weeklyFixed = Math.round(dailyFixed * daysWorked * tonRatio);
+  const totalCost=totalLimestone+totalDustCost+totalTransport+weeklyFixed;
+  const profit=totalRev-totalCost;
+  const margin=totalRev>0?(profit/totalRev)*100:0;
+  return{days,totalIncoming,totalLimestone,totalDustCost,totalBamburiTons,totalSavannahTons,totalTons,totalRev,totalTransport,totalAdvances,totalFridayTopups,totalBamburiTrucks,totalSavannahTrucks,daysWorked,dailyFixed,weeklyFixed,totalCost,profit,margin,totalDustTonsSold,dustBuyingCost,dustSellingRevenue,dustNetProfit,dustCostPerTon};
+}
+
+function calcSiteTotals(){
+  let totalIncoming=0,totalDustTrucks=0;
+  state.siteWeek.forEach(d=>{
+    totalIncoming+=parseFloat(d.incomingTrucks)||0;
+    totalDustTrucks+=parseFloat(d.dustTrucks)||0;
+  });
+  return{totalIncoming,totalDustTrucks,
+    limestoneCost:totalIncoming*(state.limestoneCostPerTruck||11500),
+    dustCost:totalDustTrucks*(state.dustCostPerTruck||5500)
+  };
+}
+function calcCombined(){
+  const m=calcCompanyWeek("moyan");
+  const h=calcCompanyWeek("hydar");
+  return{
+    totalRev:m.totalRev+h.totalRev,totalCost:m.totalCost+h.totalCost,
+    profit:m.profit+h.profit,totalTons:m.totalTons+h.totalTons,
+    margin:(m.totalRev+h.totalRev)>0?((m.profit+h.profit)/(m.totalRev+h.totalRev))*100:0
+  };
+}
+
+function buildFridayWA(cid){
+  const wt=calcCompanyWeek(cid);
+  const cName=companyMeta(cid).name;
+  let lines=[`*LIMESTONE — ${cName.toUpperCase()} FRIDAY PAYOUT*`,`Week ending ${new Date().toDateString()}`,""];
+  DAYS.forEach((name,di)=>{
+    const d=state.week[cid][di];
+    if(!d.deliveryTrucks.length)return;
+    lines.push(`*${name}*`);
+    d.deliveryTrucks.forEach((t,ti)=>{
+      const c=calcTruck(cid,t);
+      const pay=c.overpaid>0?0:c.fridayTopup;
+      const truckId=t.truckNo||`Truck ${ti+1}`;
+      const client=t.client==="bamburi"?"Bamburi":"Savannah";
+      const payTo=t.phone?` -> ${t.phone}`:"";
+      const type=t.truckType==="trailer"?"[TRAILER]":"[DUMPER]";
+      lines.push(`  ${type} ${truckId} -> ${client}: ${fmtT(c.totalDelivered)}t -> Pay KES ${pay.toLocaleString()}${payTo}`);
+    });
+  });
+  lines.push("");
+  lines.push(`*Total advances: ${fmt(wt.totalAdvances)}*`);
+  lines.push(`*Total Friday top-ups: ${fmt(wt.totalFridayTopups)}*`);
+  lines.push(`*Total transport: ${fmt(wt.totalTransport)}*`);
+  return encodeURIComponent(lines.join("\n"));
+}
+function sendFridayWA(cid){window.open("https://wa.me/?text="+buildFridayWA(cid),"_blank");}
+
+function sendMonthlyWhatsApp(){
+  const num=prompt("Enter WhatsApp number (with country code, e.g. 254712345678):");
+  if(!num)return;
+  const moyanH=state.history.filter(h=>h.company==="moyan");
+  const hydarH=state.history.filter(h=>h.company==="hydar");
+  const sumKey=(arr,k)=>arr.reduce((s,h)=>s+(h[k]||0),0);
+  let lines=["*LIMESTONE — MONTHLY REPORT*",`Date: ${new Date().toDateString()}`,""];
+  [["MOYAN",moyanH],["HYDAR",hydarH]].forEach(([label,arr])=>{
+    if(!arr.length)return;
+    lines.push(`*-- ${label} (${arr.length} weeks) --*`);
+    lines.push(`Revenue: KES ${sumKey(arr,'revenue').toLocaleString()}`);
+    const p=sumKey(arr,'profit');
+    lines.push(`${p>=0?'Profit':'Loss'}: KES ${Math.abs(p).toLocaleString()}`);
+    lines.push(`Tons: ${sumKey(arr,'totalTons').toFixed(1)}t`);
+    lines.push(`Dust used: ${sumKey(arr,'dustTonsUsed').toFixed(2)}t`);
+    lines.push(`Limestone trucks: ${sumKey(arr,'limestoneTrucksIn')}`);
+    lines.push("");
+  });
+  lines.push("Limestone Tracker - Kajiado");
+  window.open(`https://wa.me/${num}?text=${encodeURIComponent(lines.join("\n"))}`,"_blank");
+}
+
+function printPDF(cid){
+  const wt=calcCompanyWeek(cid);
+  const isProfit=wt.profit>=0;
+  const cName=companyMeta(cid).name;
+
+  // Build truck map — group all trips by truck number
+  const truckMap = {};
+  DAYS.forEach((dayName, di) => {
+    const day = state.week[cid][di];
+    day.deliveryTrucks.forEach((t, ti) => {
+      const key = (t.truckNo || 'UNKNOWN-'+(ti+1)).toUpperCase().trim();
+      if (!truckMap[key]) {
+        truckMap[key] = {
+          truckNo: t.truckNo || 'Unknown',
+          phone: t.phone || '',
+          truckType: t.truckType || 'dumper',
+          trips: [],
+          totalPayout: 0,
+          totalAdvance: 0,
+          totalTons: 0,
+          bamburiTrips: 0,
+          savannahTrips: 0,
+          bamburiTons: 0,
+          savannahTons: 0
+        };
+      }
+      const c = calcTruck(cid, t);
+      const pay = c.overpaid > 0 ? 0 : c.fridayTopup;
+      const tripRate = t.client === 'bamburi' ? (state.transportRateBamburi||950) : (state.transportRateSavannah||1000);
+      truckMap[key].trips.push({
+        day: dayName,
+        client: t.client === 'bamburi' ? 'Bamburi' : 'Savannah',
+        tons: c.totalDelivered,
+        advance: c.totalAdvance,
+        cess: c.cess,
+        fuel: c.fuel,
+        transport: c.transportCost,
+        rate: tripRate,
+        payout: pay,
+        datetime: t.datetime || ''
+      });
+      truckMap[key].totalPayout += pay;
+      truckMap[key].totalAdvance += c.totalAdvance;
+      truckMap[key].totalTons += c.totalDelivered;
+      if(t.client === 'bamburi'){ truckMap[key].bamburiTrips++; truckMap[key].bamburiTons += c.totalDelivered; }
+      else { truckMap[key].savannahTrips++; truckMap[key].savannahTons += c.totalDelivered; }
+    });
+  });
+
+  // Sort trucks alphabetically
+  const sortedTrucks = Object.keys(truckMap).sort();
+
+  // Grand totals
+  let grandPayout = 0, grandAdvance = 0, grandTons = 0, grandTrips = 0;
+  sortedTrucks.forEach(k => {
+    grandPayout += truckMap[k].totalPayout;
+    grandAdvance += truckMap[k].totalAdvance;
+    grandTons += truckMap[k].totalTons;
+    grandTrips += truckMap[k].trips.length;
+  });
+
+  // Build truck sections
+  let truckSections = '';
+  sortedTrucks.forEach((key, idx) => {
+    const tk = truckMap[key];
+    const type = tk.truckType === 'trailer' ? 'TRAILER' : 'DUMPER';
+    let tripRows = '';
+    tk.trips.forEach((trip, ti) => {
+      tripRows += `<tr>
+        <td style="padding:6px 8px;color:#555">${trip.day}</td>
+        <td style="padding:6px 8px"><span style="display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;background:${trip.client==='Bamburi'?'#FFF8E9':'#EEF5FC'};color:${trip.client==='Bamburi'?'#B8842F':'#335E8C'}">${trip.client}</span></td>
+        <td style="padding:6px 8px;text-align:right">${trip.tons.toFixed(2)}t<br><small style="color:#9A8E78">× KES ${trip.rate}/ton</small></td>
+        <td style="padding:6px 8px;text-align:right;color:#555">KES ${trip.cess.toLocaleString()}<br><small>+fuel ${trip.fuel.toLocaleString()}</small></td>
+        <td style="padding:6px 8px;text-align:right;font-weight:700;color:#5C7A52;font-size:14px">KES ${Math.round(trip.payout).toLocaleString()}</td>
+      </tr>`;
+    });
+
+    truckSections += `
+    <div style="border:2px solid #E3D9C4;border-radius:8px;margin-bottom:20px;overflow:hidden;page-break-inside:avoid">
+      <!-- Truck Header -->
+      <div style="background:#2B2622;padding:12px 16px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-size:18px;font-weight:700;color:#D4A04C;letter-spacing:0.05em">${tk.truckNo.toUpperCase()}</div>
+          <div style="font-size:11px;color:#A89A86;margin-top:2px">${type} ${tk.phone ? '· ' + tk.phone : ''}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:22px;font-weight:700;color:#5C7A52">KES ${Math.round(tk.totalPayout).toLocaleString()}</div>
+          <div style="font-size:11px;color:#A89A86">TOTAL PAYOUT</div>
+        </div>
+      </div>
+      <!-- Trip Summary Bar -->
+      <div style="background:#F5F0E6;padding:8px 16px;display:flex;gap:20px;border-bottom:1px solid #E3D9C4;font-size:12px">
+        <span><b>${tk.trips.length}</b> trip${tk.trips.length>1?'s':''}</span>
+        <span>Bamburi: <b>${tk.bamburiTrips}</b> (${tk.bamburiTons.toFixed(2)}t)</span>
+        <span>Savannah: <b>${tk.savannahTrips}</b> (${tk.savannahTons.toFixed(2)}t)</span>
+        <span>Total: <b>${tk.totalTons.toFixed(2)}t</b></span>
+      </div>
+      <!-- Trip Details -->
+      <table style="width:100%;border-collapse:collapse">
+        <tr style="background:#FAF6EC">
+          <th style="padding:6px 8px;text-align:left;font-size:11px;color:#9A8E78;font-weight:600;border-bottom:1px solid #E3D9C4">Day</th>
+          <th style="padding:6px 8px;text-align:left;font-size:11px;color:#9A8E78;font-weight:600;border-bottom:1px solid #E3D9C4">Client</th>
+          <th style="padding:6px 8px;text-align:right;font-size:11px;color:#9A8E78;font-weight:600;border-bottom:1px solid #E3D9C4">Tons</th>
+          <th style="padding:6px 8px;text-align:right;font-size:11px;color:#9A8E78;font-weight:600;border-bottom:1px solid #E3D9C4">Advance</th>
+          <th style="padding:6px 8px;text-align:right;font-size:11px;color:#9A8E78;font-weight:600;border-bottom:1px solid #E3D9C4">Payout</th>
+        </tr>
+        ${tripRows}
+        <!-- Truck Totals Row -->
+        <tr style="background:#F5F0E6;border-top:2px solid #D4A04C">
+          <td colspan="2" style="padding:8px;font-weight:700;font-size:13px">TOTALS</td>
+          <td style="padding:8px;text-align:right;font-weight:700">${tk.totalTons.toFixed(2)}t</td>
+          <td style="padding:8px;text-align:right;font-weight:700">KES ${Math.round(tk.totalAdvance).toLocaleString()}</td>
+          <td style="padding:8px;text-align:right;font-weight:700;color:#5C7A52;font-size:15px">KES ${Math.round(tk.totalPayout).toLocaleString()}</td>
+        </tr>
+      </table>
+    </div>`;
+  });
+
+  const win = window.open("", "_blank");
+  win.document.write(`<!DOCTYPE html><html><head><title>${cName} — Friday Payout Sheet</title>
+  <style>
+    *{box-sizing:border-box;}
+    body{font-family:Arial,sans-serif;padding:24px;color:#2B2622;background:#fff;}
+    h1{font-size:22px;border-bottom:4px solid #D4A04C;padding-bottom:10px;margin-bottom:4px;}
+    .meta{font-size:12px;color:#9A8E78;margin-bottom:16px;}
+    .summary{background:#F5F0E6;padding:14px 18px;border-radius:6px;margin-bottom:20px;display:flex;gap:24px;flex-wrap:wrap;}
+    .summary-item{text-align:center;}
+    .summary-val{font-size:18px;font-weight:700;}
+    .summary-label{font-size:10px;color:#9A8E78;text-transform:uppercase;letter-spacing:0.08em;}
+    .pl-section{background:#2B2622;color:#fff;padding:14px 18px;border-radius:6px;margin-bottom:20px;}
+    .pl-row{display:flex;justify-content:space-between;font-size:13px;padding:4px 0;border-bottom:1px solid #463E36;}
+    .pl-row:last-child{border-bottom:none;}
+    .grand-total{background:#F5F0E6;border:2px solid #2B2622;border-radius:6px;padding:14px 18px;margin-top:20px;display:flex;justify-content:space-between;align-items:center;}
+    @media print{.no-print{display:none}}
+  </style>
+  </head><body>
+  <h1>🪨 ${cName} — Friday Payout Sheet</h1>
+  <div class="meta">${new Date().toDateString()} · Kajiado Limestone Operations · Generated by Limestone Tracker</div>
+
+  <!-- Summary Bar -->
+  <div class="summary">
+    <div class="summary-item"><div class="summary-val">${sortedTrucks.length}</div><div class="summary-label">Trucks</div></div>
+    <div class="summary-item"><div class="summary-val">${grandTrips}</div><div class="summary-label">Total Trips</div></div>
+    <div class="summary-item"><div class="summary-val">${grandTons.toFixed(1)}t</div><div class="summary-label">Total Tons</div></div>
+    <div class="summary-item"><div class="summary-val">KES ${Math.round(grandAdvance).toLocaleString()}</div><div class="summary-label">Total Advances</div></div>
+    <div class="summary-item"><div class="summary-val" style="color:#5C7A52">KES ${Math.round(grandPayout).toLocaleString()}</div><div class="summary-label">Total Payout</div></div>
+  </div>
+
+  <!-- P&L Summary -->
+  <div class="pl-section">
+    <div style="font-size:11px;color:#D4A04C;letter-spacing:0.15em;text-transform:uppercase;margin-bottom:8px">Weekly P&L</div>
+    <div class="pl-row"><span>Bamburi Revenue (${wt.totalBamburiTons.toFixed(2)}t)</span><span>KES ${Math.round(wt.totalBamburiTons*priceFor(cid,'bamburi')).toLocaleString()}</span></div>
+    <div class="pl-row"><span>Savannah Revenue (${wt.totalSavannahTons.toFixed(2)}t)</span><span>KES ${Math.round(wt.totalSavannahTons*priceFor(cid,'savannah')).toLocaleString()}</span></div>
+    <div class="pl-row"><span>Limestone Cost</span><span>− KES ${Math.round(wt.totalLimestone).toLocaleString()}</span></div>
+    <div class="pl-row"><span>Dust Cost</span><span>− KES ${Math.round(wt.totalDustCost).toLocaleString()}</span></div>
+    <div class="pl-row"><span>Transport</span><span>− KES ${Math.round(wt.totalTransport).toLocaleString()}</span></div>
+    <div class="pl-row"><span>Fixed Costs (${wt.daysWorked} days)</span><span>− KES ${Math.round(wt.weeklyFixed).toLocaleString()}</span></div>
+    <div class="pl-row" style="border-top:1px solid #D4A04C;margin-top:4px;padding-top:8px"><span style="font-weight:700;color:#D4A04C">${isProfit?'NET PROFIT':'NET LOSS'}</span><span style="font-weight:700;color:${isProfit?'#7DC65A':'#C45B3E'}">KES ${Math.round(Math.abs(wt.profit)).toLocaleString()}</span></div>
+  </div>
+
+  <h2 style="font-size:16px;margin-bottom:12px;border-bottom:2px solid #E3D9C4;padding-bottom:8px">Payout by Truck (A–Z)</h2>
+
+  ${truckSections}
+
+  <!-- Grand Total -->
+  <div class="grand-total">
+    <div>
+      <div style="font-size:13px;color:#9A8E78;text-transform:uppercase;letter-spacing:0.1em">Grand Total Payout</div>
+      <div style="font-size:11px;color:#9A8E78;margin-top:2px">${grandTrips} trips · ${grandTons.toFixed(1)}t · ${sortedTrucks.length} trucks</div>
+    </div>
+    <div style="font-size:28px;font-weight:700;color:#5C7A52">KES ${Math.round(grandPayout).toLocaleString()}</div>
+  </div>
+
+  <p style="color:#9A8E78;font-size:11px;margin-top:24px;text-align:center">Limestone Tracker · Kajiado Quarry Operations</p>
+  <script>window.print();<\/script>
+  </body></html>`);
+  win.document.close();
+}
+
+function saveWeekToHistory(){
+  ["moyan","hydar"].forEach(cid=>{
+    const wt=calcCompanyWeek(cid);
+    if(wt.totalIncoming===0&&wt.totalTons===0)return;
+    let totalDustTonsUsed=0,totalLimestoneTonsUsed=0,totalLimestoneTrucksIn=0,totalDustTrucksIn=0;
+    state.siteWeek.forEach(day=>{
+      totalLimestoneTrucksIn+=parseFloat(day.incomingTrucks)||0;
+      totalDustTrucksIn+=parseFloat(day.dustTrucks)||0;
+    });
+    state.week[cid].forEach(day=>{
+      day.deliveryTrucks.forEach(t=>{
+        if(t.client==="bamburi"){
+          const bridge=parseFloat(t.bridgeTons)||0;
+          totalDustTonsUsed+=Math.max(0,bridge-BAMBURI_LIMESTONE_TONS);
+          totalLimestoneTonsUsed+=BAMBURI_LIMESTONE_TONS;
+        }
+      });
+    });
+    state.history.unshift({
+      company:cid,date:new Date().toDateString(),
+      profit:wt.profit,revenue:wt.totalRev,totalCost:wt.totalCost,
+      bamburiTons:wt.totalBamburiTons,savannahTons:wt.totalSavannahTons,
+      totalTons:wt.totalTons,daysWorked:wt.daysWorked,margin:wt.margin,
+      limestoneTrucksIn:totalLimestoneTrucksIn,dustTrucksIn:totalDustTrucksIn,
+      limestoneTonsUsed:totalLimestoneTonsUsed,dustTonsUsed:totalDustTonsUsed,
+      limestoneCost:wt.totalLimestone,dustCost:wt.totalDustCost,
+      bamburiTrucks:wt.totalBamburiTrucks,savannahTrucks:wt.totalSavannahTrucks
+    });
+  });
+  if(state.history.length>40)state.history=state.history.slice(0,40);
+}
+
+
+function buildBusinessContext() {
+  const m = calcCompanyWeek("moyan");
+  const h = calcCompanyWeek("hydar");
+  const combined = calcCombined();
+  const site = calcSiteTotals();
+  const dustCostPerTon = Math.round((state.dustCostPerTruck||5500)/DUST_TONS_PER_TRUCK);
+  const bamburiPrice = state.prices.moyan_bamburi || 1830;
+  const dustProfitPerTon = bamburiPrice - dustCostPerTon;
+
+  return `You are SiteLogic AI, a smart business advisor embedded inside a limestone quarry operations app called SiteLogic, built by Mohanoor Technologies in Kajiado, Kenya.
+
+You have access to the operator's REAL LIVE business data this week:
+
+=== SITE DATA (SHARED) ===
+Limestone trucks received: ${site.totalIncoming} trucks (${site.totalIncoming * 17} raw tons)
+Dust trucks received: ${site.totalDustTrucks} trucks (${site.totalDustTrucks * 18} tons)
+Limestone buying cost: KES ${(state.limestoneCostPerTruck||11500).toLocaleString()}/truck
+Dust buying cost: KES ${(state.dustCostPerTruck||5500).toLocaleString()}per truck (KES ${dustCostPerTon} per ton)
+
+=== MOYAN (Company 1) ===
+Bamburi tons delivered: ${m.totalBamburiTons.toFixed(2)}t at KES ${state.prices.moyan_bamburi} per ton
+Savannah tons delivered: ${m.totalSavannahTons.toFixed(2)}t at KES ${state.prices.moyan_savannah} per ton
+Total revenue: KES ${m.totalRev.toLocaleString()}
+Total costs: KES ${m.totalCost.toLocaleString()}
+Net profit/loss: KES ${m.profit.toLocaleString()}
+Profit margin: ${m.margin.toFixed(1)}%
+Dust tons sold: ${m.totalDustTonsSold ? m.totalDustTonsSold.toFixed(2) : 0}t
+Dust net profit: KES ${m.dustNetProfit ? m.dustNetProfit.toLocaleString() : 0}
+
+=== HYDAR (Company 2) ===
+Savannah tons delivered: ${h.totalSavannahTons.toFixed(2)}t at KES ${state.prices.hydar_savannah} per ton
+Total revenue: KES ${h.totalRev.toLocaleString()}
+Total costs: KES ${h.totalCost.toLocaleString()}
+Net profit/loss: KES ${h.profit.toLocaleString()}
+
+=== COMBINED ===
+Total revenue: KES ${combined.totalRev.toLocaleString()}
+Total profit/loss: KES ${combined.profit.toLocaleString()}
+Combined margin: ${combined.margin.toFixed(1)}%
+
+=== PRICING ===
+Bamburi transport: KES ${state.transportRateBamburi} per ton
+Savannah transport: KES ${state.transportRateSavannah} per ton
+Dust strategy: Buy at KES ${dustCostPerTon} per ton, sell at KES ${bamburiPrice} per ton = KES ${dustProfitPerTon} profit per dust ton
+Monthly fixed costs: KES ${monthlyFixed().toLocaleString()} (Salaries KES ${(state.salaries||190000).toLocaleString()} + Electricity KES ${(state.electricity||74000).toLocaleString()})
+
+=== YOUR ROLE ===
+- Answer questions about this business using the real data above
+- Give smart, specific, actionable advice
+- Spot problems, opportunities, and inefficiencies
+- Compare Bamburi vs Savannah profitability
+- Explain the dust strategy ROI clearly
+- Suggest ways to increase profit
+- Be direct, concise, and practical — this is a working quarry operator, not a student
+- Respond in the same language the user writes in (English or Swahili/Sheng mix)
+- Keep responses under 150 words unless a detailed breakdown is requested`;
+}
+
+async function sendAIMessage() {
+  const input = document.getElementById('ai-input');
+  if (!input) return;
+  const text = input.value.trim();
+  if (!text || state.aiLoading) return;
+
+  state.aiMessages.push({ role: 'user', content: text });
+  state.aiLoading = true;
+  input.value = '';
+  save();
+  render();
+
+  // Scroll to bottom
+  setTimeout(() => {
+    const msgs = document.getElementById('ai-msgs');
+    if (msgs) msgs.scrollTop = msgs.scrollHeight;
+  }, 100);
+
+  try {
+    const systemPrompt = buildBusinessContext();
+    const messages = state.aiMessages.map(m => ({ role: m.role, content: m.content }));
+
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        system: systemPrompt,
+        messages: messages
+      })
+    });
+
+    const data = await response.json();
+    const reply = data.content && data.content[0] ? data.content[0].text : "Sorry, I couldn't get a response. Try again.";
+    state.aiMessages.push({ role: 'assistant', content: reply });
+  } catch(e) {
+    state.aiMessages.push({ role: 'assistant', content: 'Connection error. Check your internet and try again.' });
+  }
+
+  state.aiLoading = false;
+  save();
+  render();
+
+  setTimeout(() => {
+    const msgs = document.getElementById('ai-msgs');
+    if (msgs) msgs.scrollTop = msgs.scrollHeight;
+  }, 100);
+}
+
+function useAISuggestion(text) {
+  const input = document.getElementById('ai-input');
+  if (input) { input.value = text; input.focus(); }
+}
+
+function clearAIChat() {
+  if (confirm('Clear conversation history?')) {
+    state.aiMessages = [];
+    save(); render();
+  }
+}
+
+
+function calcDustUsedThisWeek() {
+  let total = 0;
+  ['moyan','hydar'].forEach(cid => {
+    state.week[cid].forEach(day => {
+      day.deliveryTrucks.forEach(t => {
+        if (t.client === 'bamburi') {
+          const bridge = parseFloat(t.bridgeTons) || 0;
+          total += Math.max(0, bridge - BAMBURI_LIMESTONE_TONS);
+        }
+      });
+    });
+  });
+  return Math.round(total * 100) / 100;
+}
+
+function calcLimestoneUsedThisWeek() {
+  let total = 0;
+  state.siteWeek.forEach(d => {
+    total += (parseFloat(d.incomingTrucks) || 0) * (state.limestoneTonsPerTruck || 17);
+  });
+  return total;
+}
+
+function calcDustStockRemaining() {
+  const totalPurchased = state.dustStock.purchases.reduce((s,p) => s + (p.trucks * (state.dustTonsPerTruck||17)), 0);
+  const totalUsed = state.dustStock.purchases.reduce((s,p) => s + (p.usedTons||0), 0);
+  return Math.max(0, totalPurchased - totalUsed);
+}
+
+function addDustPurchase(trucks) {
+  const t = parseFloat(trucks) || 0;
+  if (!t) return;
+  const tons = t * (state.dustTonsPerTruck||17);
+  const cost = t * (state.dustCostPerTruck||5500);
+  state.dustStock.purchases.unshift({
+    id: Date.now(),
+    trucks: t, tons, cost,
+    date: new Date().toLocaleDateString('en-KE',{day:'2-digit',month:'short',year:'numeric'}),
+    usedTons: 0,
+    revenueGenerated: 0
+  });
+  save(); render();
+}
+
+function addLimestonePurchase(trucks) {
+  const t = parseFloat(trucks) || 0;
+  if (!t) return;
+  const tons = t * (state.limestoneTonsPerTruck||17);
+  const cost = t * (state.limestoneCostPerTruck||11500);
+  state.limestoneStock.purchases.unshift({
+    id: Date.now(),
+    trucks: t, tons, cost,
+    date: new Date().toLocaleDateString('en-KE',{day:'2-digit',month:'short',year:'numeric'}),
+    usedTons: 0,
+    revenueGenerated: 0
+  });
+  save(); render();
+}
+
+function deletePurchase(type, id) {
+  if (type === 'dust') state.dustStock.purchases = state.dustStock.purchases.filter(p => p.id !== id);
+  else state.limestoneStock.purchases = state.limestoneStock.purchases.filter(p => p.id !== id);
+  save(); render();
+}
+
+function render(){
+  const combined=calcCombined();
+  const isProfit=combined.profit>=0;
+  let html="";
+
+  html+=`<div class="banner ${isProfit?'':'loss'}">
+    <div><div class="banner-label">${isProfit?"Combined Profit":"Combined Loss"} — This Week</div>
+    <div class="banner-amt ${isProfit?'pos':'neg'}">${fmt(Math.abs(combined.profit))}</div></div>
+    <div class="banner-sub">${combined.totalTons.toFixed(1)}t total<br>margin ${combined.margin.toFixed(1)}%</div>
+  </div>`;
+
+  html+=`<div class="deck-rail">
+    <button class="deck-tab ${state.tab==='daily'?'active':''}" onclick="setTab('daily')">Daily Log</button>
+    <button class="deck-tab ${state.tab==='week'?'active':''}" onclick="setTab('week')">P&amp;L</button>
+    <button class="deck-tab ${state.tab==='friday'?'active':''}" onclick="setTab('friday')">Friday</button>
+    <button class="deck-tab ${state.tab==='history'?'active':''}" onclick="setTab('history')">History</button>
+    <button class="deck-tab ${state.tab==='inventory'?'active':''}" onclick="setTab('inventory')">Stock</button>
+    <button class="deck-tab ${state.tab==='ai'?'active':''}" onclick="setTab('ai')">AI Advisor</button>
+    <button class="deck-tab ${state.tab==='settings'?'active':''}" onclick="setTab('settings')">Settings</button>
+  </div>`;
+
+  if(state.tab!=="history"&&state.tab!=="settings"){
+    html+=`<div class="co-rail">`;
+    COMPANIES.forEach(c=>{
+      const wt=calcCompanyWeek(c.id);
+      html+=`<button class="co-card ${c.id} ${state.selectedCompany===c.id?'active':''}" onclick="setCompany('${c.id}')">
+        <div class="co-card-name">${c.name}</div>
+        <div class="co-card-tag">${wt.totalTons.toFixed(1)}t · ${fmt(wt.profit)}</div>
+      </button>`;
+    });
+    html+=`</div>`;
+  }
+
+  const cid=state.selectedCompany;
+  const wt=calcCompanyWeek(cid);
+  const clients=availableClients(cid);
+
+  // ── DAILY ──
+  if(state.tab==="daily"){
+    const dc=wt.days[state.selectedDay];
+    const day=state.week[cid][state.selectedDay];
+
+    html+=`<div class="day-rail">`;
+    DAYS.forEach((name,i)=>{
+      const d=wt.days[i];
+      const hasData=d.incoming>0||d.numDelivery>0;
+      html+=`<button class="day-chip ${state.selectedDay===i?'active':''} ${hasData?'has-data':''}" onclick="setDay(${i})">
+        <div class="day-chip-name">${name.slice(0,3)}</div>
+        <div class="day-chip-dot"></div>
+      </button>`;
+    });
+    html+=`</div><div class="panel">`;
+
+    const target=state.bamburiTargets[cid]||0;
+    if(target>0&&clients.includes("bamburi")){
+      const delivered=dc.bamburiTons;
+      const pct=Math.min(100,(delivered/target)*100);
+      const over=delivered>target;
+      html+=`<div class="target-wrap">
+        <div class="target-head"><span>${companyMeta(cid).name} Bamburi Target</span><span style="color:${over?'#5C7A52':'#B8842F'}">${fmtT(delivered)} / ${target}t</span></div>
+        <div class="target-track"><div class="target-fill ${over?'':'under'}" style="width:${pct}%"></div></div>
+        <div class="target-sub">${over?`Over by ${fmtT(delivered-target)}t`:`${fmtT(Math.max(0,target-delivered))}t remaining`}</div>
+      </div>`;
+    }
+
+    const siteDay=state.siteWeek[state.selectedDay]||{};
+    html+=`<div class="card" style="border-color:#5A5048;background:#FAF6EC">
+      <div class="card-title" style="color:#9A8E78">📦 Site Incoming — ${DAYS[state.selectedDay]} <span style="font-size:9px;background:#2B2622;color:#D4A04C;padding:2px 6px;border-radius:10px;margin-left:4px">SHARED</span></div>
+      <div style="font-size:11px;color:#9A8E78;margin-bottom:12px;font-family:'JetBrains Mono',monospace">Stock shared across all companies</div>
+      <div class="field">
+        <label>Limestone trucks received</label>
+        <div class="input-wrap"><input type="number" min="0" inputmode="numeric" value="${siteDay.incomingTrucks||''}" onchange="updateSiteField('incomingTrucks',this.value)" placeholder="0"/><span class="unit">trucks</span></div>
+        ${parseFloat(siteDay.incomingTrucks)>0?`<div class="field-hint">Cost ${fmt(parseFloat(siteDay.incomingTrucks)*(state.limestoneCostPerTruck||11500))} · ${parseFloat(siteDay.incomingTrucks)*(state.limestoneTonsPerTruck||17)} raw tons</div>`:''}
+      </div>
+      <div class="field" style="margin-bottom:0">
+        <label>Dust trucks received</label>
+        <div class="input-wrap"><input type="number" min="0" inputmode="numeric" value="${siteDay.dustTrucks||''}" onchange="updateSiteField('dustTrucks',this.value)" placeholder="0"/><span class="unit">trucks</span></div>
+        ${parseFloat(siteDay.dustTrucks)>0?`<div class="field-hint">Cost ${fmt(parseFloat(siteDay.dustTrucks)*(state.dustCostPerTruck||5500))} · ${parseFloat(siteDay.dustTrucks)*(state.dustTonsPerTruck||17)}t dust</div>`:''}
+      </div>
+    </div>`;
+
+    html+=`<div class="card-title" style="margin:0 2px 10px">Delivery Tickets — ${DAYS[state.selectedDay]}</div>`;
+    if(day.deliveryTrucks.length===0)html+=`<div class="empty">No tickets logged today</div>`;
+
+    day.deliveryTrucks.forEach((t,i)=>{
+      const isBamburi=t.client==="bamburi";
+      const c=calcTruck(cid,t);
+      const isTrailer=t.truckType==="trailer";
+      html+=`<div class="ticket client-${t.client}">
+        <div class="ticket-head">
+          <div>
+            <div class="ticket-no">TICKET #${String(i+1).padStart(3,'0')}</div>
+            <div class="ticket-client ${t.client}">${isBamburi?'Bamburi':'Savannah'}</div>
+            <div class="ticket-datetime">${t.datetime||''}</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+            <button class="ticket-remove" onclick="removeTruck(${i})">×</button>
+            <span class="ticket-type ${isTrailer?'trailer':'dumper'}">${isTrailer?'Trailer':'Dumper'}</span>
+          </div>
+        </div>
+        <div class="ticket-row">
+          <div><label>Truck Type</label>
+            <select onchange="updateTruck(${i},'truckType',this.value)">
+              <option value="dumper" ${!isTrailer?'selected':''}>Dumper (max 18t)</option>
+              <option value="trailer" ${isTrailer?'selected':''}>Trailer (32t+)</option>
+            </select>
+          </div>
+          <div><label>Cess / Tax</label>
+            <div style="padding:8px 10px;background:#FAF6EC;border:1.5px solid var(--line);border-radius:4px;font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--basalt)">${fmt(cessFor(t.truckType))}</div>
+          </div>
+        </div>
+        <div class="ticket-row">
+          <div><label>Truck No.</label><input type="text" value="${t.truckNo||''}" onchange="updateTruck(${i},'truckNo',this.value)" placeholder="KCB 123X"/></div>
+          <div><label>Phone / A/C</label><input type="text" inputmode="tel" value="${t.phone||''}" onchange="updateTruck(${i},'phone',this.value)" placeholder="07XXXXXXXX"/></div>
+        </div>
+        <div class="ticket-row">
+          <div><label>Fuel Paid (KES)</label><input type="number" min="0" inputmode="numeric" value="${t.fuel||''}" onchange="updateTruck(${i},'fuel',this.value)" placeholder="0"/></div>
+          <div><label>Total Advance</label>
+            <div style="padding:8px 10px;background:#FAF6EC;border:1.5px solid var(--line);border-radius:4px;font-size:13px;font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--basalt)">${fmt(c.totalAdvance)}</div>
+          </div>
+        </div>`;
+
+      if(isBamburi){
+        const bridge=parseFloat(t.bridgeTons)||0;
+        const dustTons=Math.max(0,bridge-BAMBURI_LIMESTONE_TONS);
+        html+=`<div class="ticket-row">
+          <div><label>Weighbridge Tons</label><input type="number" min="0" step="0.01" inputmode="decimal" value="${t.bridgeTons}" onchange="updateTruck(${i},'bridgeTons',this.value)" placeholder="17.50"/></div>
+          <div><label>Mix</label><div style="padding:8px 0;font-size:11px;font-family:'JetBrains Mono',monospace;color:#6B6155">${bridge>0?`5t + ${dustTons.toFixed(2)}t dust`:'—'}</div></div>
+        </div>`;
+      }else{
+        html+=`<div class="ticket-row">
+          <div><label>Tons Delivered</label><input type="number" min="0" inputmode="decimal" value="${t.tons}" onchange="updateTruck(${i},'tons',this.value)" placeholder="17"/></div>
+          <div><label>Rate</label><div style="padding:8px 0;font-size:11px;font-family:'JetBrains Mono',monospace;color:#6B6155">KES ${priceFor(cid,'savannah')}/ton</div></div>
+        </div>`;
+      }
+
+      if(c.totalDelivered>0){
+        html+=`<div class="ticket-stub">
+          <div class="ticket-stub-row"><span>Revenue (${fmtT(c.totalDelivered)}t × ${c.price})</span><b>${fmt(c.revenue)}</b></div>
+          <div class="ticket-stub-row"><span>Limestone share</span><b>− ${fmt(c.limestoneCostShare)}</b></div>
+          ${isBamburi?`<div class="ticket-stub-row"><span>Dust (${fmtT(c.dustTons)}t)</span><b>− ${fmt(c.dustCost)}</b></div>`:''}
+          <div class="ticket-stub-row"><span>Transport (${fmtT(c.totalDelivered)}t × ${isBamburi?state.transportRateBamburi:state.transportRateSavannah})</span><b>− ${fmt(c.transportCost)}</b></div>
+          <div class="ticket-stub-row divider"><span>Cess paid</span><b>− ${fmt(c.cess)}</b></div>
+          <div class="ticket-stub-row"><span>Fuel paid</span><b>− ${fmt(c.fuel)}</b></div>
+          <div class="ticket-stub-row divider ${c.overpaid>0?'recover':'pay'}"><span>${c.overpaid>0?'Recover from driver':'Pay Friday'}</span><b>${fmt(c.overpaid>0?c.overpaid:c.fridayTopup)}</b></div>
+          <div class="ticket-stub-row divider"><span>Gross profit</span><b style="color:${c.grossProfit>=0?'#5C7A52':'#C45B3E'}">${fmt(c.grossProfit)}</b></div>
+        </div>`;
+      }
+      html+=`</div>`;
+    });
+
+    html+=`<div class="add-rail">`;
+    if(clients.includes("bamburi"))html+=`<button class="add-btn bamburi" onclick="addTruck('bamburi')">+ Bamburi Ticket</button>`;
+    if(clients.includes("savannah"))html+=`<button class="add-btn savannah" onclick="addTruck('savannah')">+ Savannah Ticket</button>`;
+    html+=`</div>`;
+
+    if(dc.numDelivery>0){
+      html+=`<div class="day-summary">
+        <div class="day-sum-row"><span>Today's revenue</span><span>${fmt(dc.totalRev)}</span></div>
+        <div class="day-sum-row"><span>Bamburi tons</span><span>${fmtT(dc.bamburiTons)}t</span></div>
+        <div class="day-sum-row"><span>Savannah tons</span><span>${fmtT(dc.savannahTons)}t</span></div>
+        <div class="day-sum-row"><span>Total advances</span><span>${fmt(dc.totalAdvances)}</span></div>
+        <div class="day-sum-row"><span>Friday top-ups</span><span>${fmt(dc.totalFridayTopups)}</span></div>
+      </div>`;
+    }
+    html+=`</div>`;
+  }
+
+  // ── WEEK P&L ──
+  if(state.tab==="week"){
+    html+=`<div class="panel">`;
+    const bamburiRev=wt.totalBamburiTons*priceFor(cid,'bamburi');
+    const savannahRev=wt.totalSavannahTons*priceFor(cid,'savannah');
+    html+=`<div class="card"><div class="card-title">${companyMeta(cid).name} — Weekly P&amp;L</div>`;
+    DAYS.forEach((name,i)=>{
+      const d=wt.days[i];
+      const hasData=d.incoming>0||d.numDelivery>0;
+      html+=`<div class="pl-row" style="opacity:${hasData?1:0.4}">
+        <span class="pl-label">${name}</span>
+        <span class="pl-value" style="font-size:11px">${hasData?`${d.incoming}in · B:${d.bamburiTrucks} S:${d.savannahTrucks} · ${fmt(d.totalRev)}`:'No data'}</span>
+      </div>`;
+    });
+    html+=`<div style="height:10px"></div>`;
+    if(clients.includes("bamburi"))html+=`<div class="pl-row"><span class="pl-label">Bamburi — ${fmtT(wt.totalBamburiTons)}t × ${priceFor(cid,'bamburi')}</span><span class="pl-value">${fmt(bamburiRev)}</span></div>`;
+    html+=`<div class="pl-row"><span class="pl-label">Savannah — ${fmtT(wt.totalSavannahTons)}t × ${priceFor(cid,'savannah')}</span><span class="pl-value">${fmt(savannahRev)}</span></div>
+      <div class="pl-row"><span class="pl-label bold">Total Revenue</span><span class="pl-value">${fmt(wt.totalRev)}</span></div>
+      <div style="height:6px"></div>
+      <div class="pl-row"><span class="pl-label">Limestone — ${wt.totalIncoming} trucks</span><span class="pl-value">${fmt(wt.totalLimestone)}</span></div>
+      <div class="pl-row"><span class="pl-label">Dust cost</span><span class="pl-value">${fmt(wt.totalDustCost)}</span></div>
+      <div class="pl-row"><span class="pl-label">Transport (Bamburi × ${state.transportRateBamburi} / Savannah × ${state.transportRateSavannah})</span><span class="pl-value">${fmt(wt.totalTransport)}</span></div>
+      <div class="pl-row"><span class="pl-label">Fixed costs — ${wt.daysWorked} days<small>Salaries ${fmt(state.salaries)} + Elec ${fmt(state.electricity)}</small></span><span class="pl-value">${fmt(wt.weeklyFixed)}</span></div>
+      <div class="pl-row pl-total"><span class="pl-label bold">Total Costs</span><span class="pl-value">${fmt(wt.totalCost)}</span></div>
+      <div class="pl-net"><span style="color:${wt.profit>=0?'#5C7A52':'#C45B3E'}">${wt.profit>=0?"NET PROFIT":"NET LOSS"}</span><span style="color:${wt.profit>=0?'#5C7A52':'#C45B3E'}">${fmt(Math.abs(wt.profit))}</span></div>
+      <button class="pdf-btn" onclick="printPDF('${cid}')">Export ${companyMeta(cid).name} PDF</button>
+    </div>
+    ${clients.includes('bamburi') && wt.totalDustTonsSold > 0 ? `<div class="card">
+      <div class="card-title" style="color:var(--gold-dark)">🟡 Dust Strategy Breakdown</div>
+      <div class="pl-row"><span class="pl-label">Dust tons sold this week<small>Embedded in Bamburi deliveries</small></span><span class="pl-value">${fmtT(wt.totalDustTonsSold)}t</span></div>
+      <div class="pl-row"><span class="pl-label">Dust selling revenue<small>${fmtT(wt.totalDustTonsSold)}t × KES ${priceFor(cid,'bamburi')} (Bamburi rate)</small></span><span class="pl-value">${fmt(wt.dustSellingRevenue)}</span></div>
+      <div class="pl-row"><span class="pl-label">Dust buying cost<small>${fmtT(wt.totalDustTonsSold)}t × KES ${Math.round(wt.dustCostPerTon)} (KES ${state.dustCostPerTruck}/18t)</small></span><span class="pl-value">− ${fmt(wt.dustBuyingCost)}</span></div>
+      <div class="pl-row pl-total"><span class="pl-label bold">Dust Net Profit</span><span class="pl-value" style="color:${wt.dustNetProfit>=0?'#5C7A52':'#C45B3E'}">${fmt(Math.abs(wt.dustNetProfit))}</span></div>
+      <div style="margin-top:10px;padding:10px 12px;background:var(--cream);border-radius:6px;font-family:'JetBrains Mono',monospace">
+        <div style="font-size:10px;color:#9A8E78;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.1em">Dust ROI</div>
+        <div style="font-size:11px;color:#6B6155">Buy at <b style="color:var(--basalt)">KES ${Math.round(wt.dustCostPerTon)}/ton</b> · Sell at <b style="color:var(--basalt)">KES ${priceFor(cid,'bamburi')}/ton</b></div>
+        <div style="font-size:13px;font-weight:700;color:var(--moss);margin-top:4px">KES ${Math.round(priceFor(cid,'bamburi') - wt.dustCostPerTon)} profit per dust ton</div>
+      </div>
+    </div>` : ''}`;
+    html+=`<div class="card"><div class="card-title">Combined — Moyan + Hydar</div>
+      <div class="pl-row"><span class="pl-label">Total Revenue</span><span class="pl-value">${fmt(combined.totalRev)}</span></div>
+      <div class="pl-row"><span class="pl-label">Total Costs</span><span class="pl-value">${fmt(combined.totalCost)}</span></div>
+      <div class="pl-net"><span style="color:${combined.profit>=0?'#5C7A52':'#C45B3E'}">${combined.profit>=0?"NET PROFIT":"NET LOSS"}</span><span style="color:${combined.profit>=0?'#5C7A52':'#C45B3E'}">${fmt(Math.abs(combined.profit))}</span></div>
+      <button class="reset-btn" onclick="resetWeek()">Reset Week — saves both companies to history</button>
+    </div></div>`;
+  }
+
+  // ── FRIDAY ──
+  if(state.tab==="friday"){
+    html+=`<div class="panel"><div class="card"><div class="card-title">Friday Formula</div>
+      <div style="font-size:12px;color:#6B6155;line-height:1.8;font-family:'JetBrains Mono',monospace">
+        Earned = tons × rate (Bamburi: ${state.transportRateBamburi} / Savannah: ${state.transportRateSavannah})<br>
+        Advance = cess + fuel paid<br>
+        <b style="color:var(--basalt)">Top-up = earned − advance</b>
+      </div>
+    </div>`;
+    let hasAny=false;
+    DAYS.forEach((name,di)=>{
+      const d=state.week[cid][di];
+      if(!d.deliveryTrucks.length)return;
+      hasAny=true;
+      html+=`<div class="card-title" style="margin:0 2px 8px">${name}</div>`;
+      d.deliveryTrucks.forEach((t,ti)=>{
+        const c=calcTruck(cid,t);
+        const isTrailer=t.truckType==="trailer";
+        html+=`<div class="hist-card" style="border-left:4px solid ${t.client==='bamburi'?'#D4A04C':'#6B98C7'}">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <div style="font-weight:700;font-size:13px">${t.truckNo||'Truck '+(ti+1)}</div>
+              <div style="font-size:10px;color:#9A8E78;font-family:'JetBrains Mono',monospace;margin-top:2px">${isTrailer?'Trailer':'Dumper'} → ${t.client==='bamburi'?'Bamburi':'Savannah'}</div>
+              <div style="font-size:11px;color:#9A8E78;font-family:'JetBrains Mono',monospace;margin-top:2px">${fmtT(c.totalDelivered)}t × ${t.client==='bamburi'?state.transportRateBamburi:state.transportRateSavannah} = ${fmt(c.transportCost)}</div>
+              <div style="font-size:11px;color:#9A8E78;font-family:'JetBrains Mono',monospace">Cess ${fmt(c.cess)} + Fuel ${fmt(c.fuel)} = ${fmt(c.totalAdvance)}</div>
+              ${t.phone?`<div style="font-size:11px;color:#9A8E78;font-family:'JetBrains Mono',monospace;margin-top:2px">${t.phone}</div>`:''}
+              ${t.datetime?`<div style="font-size:10px;color:#C9BDA9;font-family:'JetBrains Mono',monospace;margin-top:2px">${t.datetime}</div>`:''}
+            </div>
+            <div style="text-align:right;flex-shrink:0;margin-left:8px">
+              <div style="font-size:10px;color:#9A8E78;text-transform:uppercase;font-family:'JetBrains Mono',monospace">${c.overpaid>0?'Recover':'Pay'}</div>
+              <div style="font-size:17px;font-weight:700;font-family:'JetBrains Mono',monospace;color:${c.overpaid>0?'#C45B3E':'#5C7A52'}">${fmt(c.overpaid>0?c.overpaid:c.fridayTopup)}</div>
+            </div>
+          </div>
+        </div>`;
+      });
+    });
+    if(!hasAny)html+=`<div class="empty">No delivery tickets logged this week</div>`;
+    html+=`<div class="hist-card" style="background:var(--basalt);border:none">
+      <div class="hist-row" style="border-color:#463E36"><span style="color:#A89A86">Total advances</span><span style="color:#fff">${fmt(wt.totalAdvances)}</span></div>
+      <div class="hist-row" style="border-color:#463E36"><span style="color:#A89A86">Total Friday top-ups</span><span style="color:#fff">${fmt(wt.totalFridayTopups)}</span></div>
+      <div class="hist-row" style="border:none"><span style="color:var(--gold);font-weight:700">Total transport</span><span style="color:var(--gold);font-weight:700">${fmt(wt.totalTransport)}</span></div>
+    </div>`;
+    if(hasAny)html+=`<button class="wa-btn" onclick="sendFridayWA('${cid}')">Send ${companyMeta(cid).name} Summary via WhatsApp</button>`;
+    html+=`</div>`;
+  }
+
+  // ── HISTORY ──
+  // ── INVENTORY ──
+  if(state.tab==="inventory"){
+    const dustUsedWeek = calcDustUsedThisWeek();
+    const limeUsedWeek = calcLimestoneUsedThisWeek();
+    const dustRemaining = calcDustStockRemaining();
+    const dustTotalPurchased = state.dustStock.purchases.reduce((s,p)=>s+p.tons,0);
+    const dustPct = dustTotalPurchased > 0 ? Math.min(100,(dustRemaining/dustTotalPurchased)*100) : 0;
+    const dustCostPerTon = Math.round((state.dustCostPerTruck||5500)/(state.dustTonsPerTruck||17));
+    const bamburiPrice = state.prices.moyan_bamburi || 1830;
+    const dustProfitPerTon = bamburiPrice - dustCostPerTon;
+    const stockClass = dustPct > 50 ? 'good' : dustPct > 20 ? 'medium' : 'low';
+
+    html += `<div class="inv-section">`;
+
+    // ── DUST INVENTORY ──
+    if (dustRemaining < 50 && dustTotalPurchased > 0) {
+      html += `<div class="inv-alert">⚠️ Low dust stock — ${dustRemaining.toFixed(1)}t remaining. Order soon.</div>`;
+    }
+
+    html += `<div class="inv-card">
+      <div class="inv-title">🟡 Dust Stock</div>
+      <div class="inv-stat-row">
+        <div class="inv-stat"><div class="inv-stat-val">${dustRemaining.toFixed(1)}t</div><div class="inv-stat-label">Remaining</div></div>
+        <div class="inv-stat"><div class="inv-stat-val">${dustUsedWeek.toFixed(1)}t</div><div class="inv-stat-label">Used This Week</div></div>
+        <div class="inv-stat"><div class="inv-stat-val">${dustTotalPurchased.toFixed(0)}t</div><div class="inv-stat-label">Total Purchased</div></div>
+      </div>
+      <div class="inv-stock-bar-wrap">
+        <div style="display:flex;justify-content:space-between;font-size:10px;color:#9A8E78;font-family:'JetBrains Mono',monospace;margin-bottom:4px">
+          <span>Stock level</span><span>${dustPct.toFixed(0)}% remaining</span>
+        </div>
+        <div class="inv-stock-bar"><div class="inv-stock-fill ${stockClass}" style="width:${dustPct}%"></div></div>
+      </div>
+      <div style="font-size:11px;color:#9A8E78;font-family:'JetBrains Mono',monospace;margin-top:8px">
+        Buy KES ${dustCostPerTon}/ton · Sell KES ${bamburiPrice}/ton · <b style="color:var(--moss)">Profit KES ${dustProfitPerTon}/ton</b>
+      </div>
+      <div class="inv-add-row">
+        <input class="inv-add-input" type="number" min="0" inputmode="numeric" id="dust-add-input" placeholder="Trucks received" />
+        <button class="inv-add-btn" onclick="addDustPurchase(document.getElementById('dust-add-input').value)">+ Add Order</button>
+      </div>
+    </div>`;
+
+    // Dust purchase history with ROI
+    if (state.dustStock.purchases.length > 0) {
+      html += `<div class="inv-card"><div class="inv-title">Dust Purchase History & ROI</div>`;
+      state.dustStock.purchases.forEach(p => {
+        const revenueIfSoldAll = p.tons * bamburiPrice;
+        const netProfit = revenueIfSoldAll - p.cost;
+        const roi = p.cost > 0 ? ((netProfit/p.cost)*100).toFixed(0) : 0;
+        html += `<div class="inv-purchase-row">
+          <div>
+            <div class="inv-purchase-info">${p.trucks} trucks · ${p.tons}t · ${fmt(p.cost)}</div>
+            <div class="inv-purchase-date">${p.date}</div>
+            <div class="inv-roi ${netProfit>=0?'':'loss'}">ROI: ${roi}% · Potential revenue ${fmt(revenueIfSoldAll)}</div>
+          </div>
+          <button class="inv-del-btn" onclick="deletePurchase('dust',${p.id})">×</button>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
+    // ── LIMESTONE INVENTORY ──
+    const limeTotalPurchased = state.limestoneStock.purchases.reduce((s,p)=>s+p.tons,0);
+    html += `<div class="inv-card">
+      <div class="inv-title">⚪ Limestone Stock (Daily)</div>
+      <div class="inv-stat-row">
+        <div class="inv-stat"><div class="inv-stat-val">${limeUsedWeek.toFixed(0)}t</div><div class="inv-stat-label">Used This Week</div></div>
+        <div class="inv-stat"><div class="inv-stat-val">${(limeUsedWeek / (state.limestoneTonsPerTruck||17)).toFixed(1)}</div><div class="inv-stat-label">Trucks Used</div></div>
+        <div class="inv-stat"><div class="inv-stat-val">Max ${10*(state.limestoneTonsPerTruck||17)}t</div><div class="inv-stat-label">Per Day Limit</div></div>
+      </div>
+      <div style="font-size:11px;color:#9A8E78;font-family:'JetBrains Mono',monospace;margin-bottom:12px">
+        Max 10 trucks per day · ${state.limestoneTonsPerTruck||17}t per truck · KES ${(state.limestoneCostPerTruck||11500).toLocaleString()}/truck
+      </div>
+      <div class="inv-add-row">
+        <input class="inv-add-input" type="number" min="0" max="10" inputmode="numeric" id="lime-add-input" placeholder="Trucks today (max 10)" />
+        <button class="inv-add-btn" style="background:var(--basalt);color:var(--gold)" onclick="addLimestonePurchase(document.getElementById('lime-add-input').value)">+ Log</button>
+      </div>
+    </div>`;
+
+    if (state.limestoneStock.purchases.length > 0) {
+      html += `<div class="inv-card"><div class="inv-title">Limestone Purchase Log</div>`;
+      state.limestoneStock.purchases.slice(0,10).forEach(p => {
+        const costPerTon = Math.round(p.cost/p.tons);
+        html += `<div class="inv-purchase-row">
+          <div>
+            <div class="inv-purchase-info">${p.trucks} trucks · ${p.tons}t · ${fmt(p.cost)}</div>
+            <div class="inv-purchase-date">${p.date} · KES ${costPerTon}/ton</div>
+          </div>
+          <button class="inv-del-btn" onclick="deletePurchase('limestone',${p.id})">×</button>
+        </div>`;
+      });
+      html += `</div>`;
+    }
+
+    html += `</div>`;
+  }
+
+  // ── AI ADVISOR ──
+  if(state.tab==="ai"){
+    const suggestions = [
+      "Why am I making a loss?",
+      "Is my dust strategy profitable?",
+      "Bamburi vs Savannah — which is better?",
+      "How can I increase profit this week?",
+      "What is my cost per ton?",
+      "How much did transport cost me?"
+    ];
+    html+=`<div class="ai-wrap">
+      <div class="ai-header">
+        <div class="ai-header-title">SiteLogic AI Advisor</div>
+        <div class="ai-header-sub">Ask anything about your business · Powered by Claude AI</div>
+      </div>
+      <div class="ai-suggestions">
+        ${suggestions.map(s=>`<button class="ai-chip" onclick="useAISuggestion('${s}')">${s}</button>`).join('')}
+      </div>
+      ${state.aiMessages.length>0?`<div class="ai-clear" onclick="clearAIChat()">Clear conversation</div>`:''}
+      <div class="ai-messages" id="ai-msgs">
+        ${state.aiMessages.length===0?`<div style="text-align:center;padding:24px 0;color:#9A8E78;font-family:'JetBrains Mono',monospace;font-size:12px">Ask me anything about your limestone business.<br>I have access to your real data.</div>`:''}
+        ${state.aiMessages.map(m=>`
+          <div class="ai-msg ${m.role}">
+            <div class="ai-avatar ${m.role==='assistant'?'bot':'user'}">${m.role==='assistant'?'SL':'You'}</div>
+            <div class="ai-bubble ${m.role==='assistant'?'bot':'user'}">${m.content.split(String.fromCharCode(10)).join("<br>")}</div>
+          </div>
+        `).join('')}
+        ${state.aiLoading?`<div class="ai-msg"><div class="ai-avatar bot">SL</div><div class="ai-bubble bot thinking">Analyzing your business data...</div></div>`:''}
+      </div>
+      <div class="ai-input-wrap">
+        <textarea class="ai-input" id="ai-input" placeholder="Ask about your ROI, costs, strategy..." rows="1"
+          onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAIMessage();}"></textarea>
+        <button class="ai-send" onclick="sendAIMessage()" ${state.aiLoading?'disabled':''}>
+          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
+    </div>`;
+  }
+
+  if(state.tab==="history"){
+    html+=`<div class="panel">`;
+    if(state.history.length===0){
+      html+=`<div class="empty" style="padding:40px 0">No history yet.<br>Reset a week to save it here.</div>`;
+    }else{
+      const moyanH=state.history.filter(h=>h.company==="moyan");
+      const hydarH=state.history.filter(h=>h.company==="hydar");
+      const sumKey=(arr,k)=>arr.reduce((s,h)=>s+(h[k]||0),0);
+      const allProfit=sumKey(state.history,'profit');
+      const allRev=sumKey(state.history,'revenue');
+      const allTons=sumKey(state.history,'totalTons');
+      html+=`<div class="card"><div class="card-title">All-Time Summary (${state.history.length} entries)</div>
+        <div style="display:flex;gap:8px;text-align:center;padding:8px 0;border-bottom:1px dashed var(--line);margin-bottom:10px">
+          <div class="month-stat"><div class="month-stat-val" style="color:${allProfit>=0?'#5C7A52':'#C45B3E'}">${fmt(Math.abs(allProfit))}</div><div class="month-stat-label">${allProfit>=0?'Profit':'Loss'}</div></div>
+          <div class="month-stat"><div class="month-stat-val">${fmt(allRev)}</div><div class="month-stat-label">Revenue</div></div>
+          <div class="month-stat"><div class="month-stat-val">${allTons.toFixed(0)}t</div><div class="month-stat-label">Tons</div></div>
+        </div>
+        <div style="font-size:10px;font-weight:700;color:#9A8E78;text-transform:uppercase;letter-spacing:0.1em;margin:6px 0;font-family:'JetBrains Mono',monospace">Moyan (${moyanH.length} weeks)</div>
+        <div class="hist-row"><span>Revenue</span><span>${fmt(sumKey(moyanH,'revenue'))}</span></div>
+        <div class="hist-row"><span>Profit/Loss</span><span style="color:${sumKey(moyanH,'profit')>=0?'#5C7A52':'#C45B3E'}">${fmt(Math.abs(sumKey(moyanH,'profit')))}</span></div>
+        <div class="hist-row"><span>Dust used</span><span>${sumKey(moyanH,'dustTonsUsed').toFixed(2)}t</span></div>
+        <div style="font-size:10px;font-weight:700;color:#9A8E78;text-transform:uppercase;letter-spacing:0.1em;margin:10px 0 6px;font-family:'JetBrains Mono',monospace">Hydar (${hydarH.length} weeks)</div>
+        <div class="hist-row"><span>Revenue</span><span>${fmt(sumKey(hydarH,'revenue'))}</span></div>
+        <div class="hist-row"><span>Profit/Loss</span><span style="color:${sumKey(hydarH,'profit')>=0?'#5C7A52':'#C45B3E'}">${fmt(Math.abs(sumKey(hydarH,'profit')))}</span></div>
+        <button class="wa-btn" onclick="sendMonthlyWhatsApp()">Send Monthly Report via WhatsApp</button>
+      </div>`;
+      state.history.forEach(h=>{
+        const hp=h.profit>=0;
+        html+=`<div class="hist-card">
+          <div class="hist-head"><span class="hist-pill ${h.company}">${companyMeta(h.company).name}</span><span class="hist-date">${h.date}</span></div>
+          <div class="hist-row"><span>Revenue</span><span>${fmt(h.revenue)}</span></div>
+          <div class="hist-row"><span>Costs</span><span>${fmt(h.totalCost)}</span></div>
+          <div class="hist-row"><span>Bamburi</span><span>${(h.bamburiTons||0).toFixed(1)}t · ${h.bamburiTrucks||0} trucks</span></div>
+          <div class="hist-row"><span>Savannah</span><span>${(h.savannahTons||0).toFixed(1)}t · ${h.savannahTrucks||0} trucks</span></div>
+          <div class="hist-row"><span>Dust used</span><span>${(h.dustTonsUsed||0).toFixed(2)}t</span></div>
+          <div style="margin-top:8px"><span class="hist-profit ${hp?'pos':'neg'}">${hp?'Profit':'Loss'}: ${fmt(Math.abs(h.profit))}</span></div>
+        </div>`;
+      });
+    }
+    html+=`</div>`;
+  }
+
+  // ── SETTINGS ──
+  if(state.tab==="settings"){
+    html+=`<div class="panel">
+    <div class="card"><div class="card-title">Selling Prices</div>
+      <div class="field"><label>Moyan → Bamburi</label><div class="input-wrap"><input type="number" value="${state.prices.moyan_bamburi}" onchange="updatePrice('moyan_bamburi',this.value)"/><span class="unit">KES/ton</span></div></div>
+      <div class="field"><label>Moyan → Savannah</label><div class="input-wrap"><input type="number" value="${state.prices.moyan_savannah}" onchange="updatePrice('moyan_savannah',this.value)"/><span class="unit">KES/ton</span></div></div>
+      <div class="field"><label>Hydar → Savannah</label><div class="input-wrap"><input type="number" value="${state.prices.hydar_savannah}" onchange="updatePrice('hydar_savannah',this.value)"/><span class="unit">KES/ton</span></div></div>
+      ${state.hydarBamburiEnabled?`<div class="field"><label>Hydar → Bamburi</label><div class="input-wrap"><input type="number" value="${state.prices.hydar_bamburi}" onchange="updatePrice('hydar_bamburi',this.value)"/><span class="unit">KES/ton</span></div></div>`:''}
+      <label class="checkbox-row"><input type="checkbox" ${state.hydarBamburiEnabled?'checked':''} onchange="toggleHydarBamburi(this.checked)"/><span>Enable Bamburi orders for Hydar</span></label>
+    </div>
+    <div class="card"><div class="card-title">Monthly Fixed Costs</div>
+      <div class="field"><label>Salaries this month</label><div class="input-wrap"><input type="number" min="0" value="${state.salaries}" onchange="updateMeta('salaries',this.value)"/><span class="unit">KES</span></div></div>
+      <div class="field" style="margin-bottom:0"><label>Electricity bill this month</label><div class="input-wrap"><input type="number" min="0" value="${state.electricity}" onchange="updateMeta('electricity',this.value)"/><span class="unit">KES</span></div>
+        <div class="field-hint">Total monthly fixed: ${fmt((state.salaries||0)+(state.electricity||0))}</div>
+      </div>
+    </div>
+    <div class="card"><div class="card-title">Daily Bamburi Targets</div>
+      <div class="field"><label>Moyan daily target</label><div class="input-wrap"><input type="number" min="0" value="${state.bamburiTargets.moyan||0}" onchange="updateTarget('moyan',this.value)" placeholder="70"/><span class="unit">tons/day</span></div></div>
+      ${state.hydarBamburiEnabled?`<div class="field" style="margin-bottom:0"><label>Hydar daily target</label><div class="input-wrap"><input type="number" min="0" value="${state.bamburiTargets.hydar||0}" onchange="updateTarget('hydar',this.value)" placeholder="0"/><span class="unit">tons/day</span></div></div>`:''}
+    </div>
+    <div class="card"><div class="card-title">Transport Rates</div>
+      <div class="field"><label>Bamburi transport rate</label><div class="input-wrap"><input type="number" min="0" value="${state.transportRateBamburi}" onchange="updateMeta('transportRateBamburi',this.value)"/><span class="unit">KES/ton</span></div></div>
+      <div class="field"><label>Savannah transport rate</label><div class="input-wrap"><input type="number" min="0" value="${state.transportRateSavannah}" onchange="updateMeta('transportRateSavannah',this.value)"/><span class="unit">KES/ton</span></div></div>
+    </div>
+    <div class="card"><div class="card-title">Buying Costs & Truck Sizes</div>
+      <div class="field"><label>Limestone — cost per truck</label><div class="input-wrap"><input type="number" min="0" value="${state.limestoneCostPerTruck}" onchange="updateMeta('limestoneCostPerTruck',this.value)"/><span class="unit">KES</span></div></div>
+      <div class="field"><label>Limestone — tons per truck</label><div class="input-wrap"><input type="number" min="1" value="${state.limestoneTonsPerTruck||17}" onchange="updateMeta('limestoneTonsPerTruck',this.value)"/><span class="unit">tons</span></div>
+        <div class="field-hint">Cost per ton: KES ${Math.round((state.limestoneCostPerTruck||11500)/(state.limestoneTonsPerTruck||17))}</div>
+      </div>
+      <div class="field"><label>Dust — cost per truck</label><div class="input-wrap"><input type="number" min="0" value="${state.dustCostPerTruck}" onchange="updateMeta('dustCostPerTruck',this.value)"/><span class="unit">KES</span></div></div>
+      <div class="field" style="margin-bottom:0"><label>Dust — tons per truck</label><div class="input-wrap"><input type="number" min="1" value="${state.dustTonsPerTruck||17}" onchange="updateMeta('dustTonsPerTruck',this.value)"/><span class="unit">tons</span></div>
+        <div class="field-hint">Cost per ton: KES ${Math.round((state.dustCostPerTruck||5500)/(state.dustTonsPerTruck||17))}</div>
+      </div>
+    </div>
+    <div class="card"><div class="card-title">Operations</div>
+      <div class="field"><label>Working days this month</label><div class="input-wrap"><input type="number" min="1" value="${state.daysInMonth}" onchange="updateMeta('daysInMonth',this.value)"/><span class="unit">days</span></div>
+        <div class="field-hint">Daily fixed: ${fmt(state.daysInMonth>0?monthlyFixed()/state.daysInMonth:0)}</div>
+      </div>
+      <div class="field" style="margin-bottom:0"><label>Days worked before this week</label><div class="input-wrap"><input type="number" min="0" value="${state.workedBefore}" onchange="updateMeta('workedBefore',this.value)"/><span class="unit">days</span></div></div>
+      <div class="constants-list">
+        <div style="font-size:10px;font-weight:700;color:var(--basalt);margin-bottom:8px;font-family:'JetBrains Mono',monospace">FIXED CONSTANTS</div>
+        <div class="const-row"><span>Limestone per truck</span><span>KES ${state.limestoneCostPerTruck||11500} / ${state.limestoneTonsPerTruck||17}t</span></div>
+        <div class="const-row"><span>Dust per truck</span><span>KES ${state.dustCostPerTruck||5500} / ${state.dustTonsPerTruck||17}t</span></div>
+        <div class="const-row"><span>Dumper cess</span><span>KES 2,500</span></div>
+        <div class="const-row"><span>Trailer cess</span><span>KES 5,000</span></div>
+        <div class="const-row"><span>Bamburi limestone</span><span>5t fixed</span></div>
+      </div>
+    </div></div>`;
+  }
+
+  html+=`<div class="footer">log daily · pay friday · reset monday — moyan + hydar</div>`;
+  document.getElementById("app").innerHTML=html;
+}
+
+function setTab(t){state.tab=t;render();}
+function setCompany(c){state.selectedCompany=c;state.selectedDay=0;render();}
+function setDay(i){state.selectedDay=i;render();}
+function updateField(field,val){
+  state.week[state.selectedCompany][state.selectedDay][field]=val;
+  if(!state.week[state.selectedCompany][state.selectedDay].loggedAt){
+    state.week[state.selectedCompany][state.selectedDay].loggedAt=nowStamp();
+  }
+  save();render();
+}
+function updateSiteField(field,val){
+  state.siteWeek[state.selectedDay][field]=val;
+  if(!state.siteWeek[state.selectedDay].loggedAt){
+    state.siteWeek[state.selectedDay].loggedAt=nowStamp();
+  }
+  save();render();
+}
+function addTruck(client){
+  state.week[state.selectedCompany][state.selectedDay].deliveryTrucks.push({
+    bridgeTons:'',tons:'',truckNo:'',phone:'',fuel:'',truckType:'dumper',client,datetime:nowStamp()
+  });
+  save();render();
+}
+function removeTruck(i){state.week[state.selectedCompany][state.selectedDay].deliveryTrucks.splice(i,1);save();render();}
+function updateTruck(i,field,val){state.week[state.selectedCompany][state.selectedDay].deliveryTrucks[i][field]=val;save();render();}
+function updateMeta(field,val){state[field]=parseFloat(val)||0;save();render();}
+function updatePrice(key,val){state.prices[key]=parseFloat(val)||0;save();render();}
+function updateTarget(company,val){state.bamburiTargets[company]=parseFloat(val)||0;save();render();}
+function toggleHydarBamburi(checked){state.hydarBamburiEnabled=checked;save();render();}
+function resetWeek(){
+  if(confirm("Save this week (both companies) to history and start fresh?")){
+    saveWeekToHistory();
+    state.siteWeek=DAYS.map(()=>({incomingTrucks:"",dustTrucks:"",loggedAt:""}));
+    state.week={
+      moyan:DAYS.map(()=>({deliveryTrucks:[],loggedAt:""})),
+      hydar:DAYS.map(()=>({deliveryTrucks:[],loggedAt:""}))
+    };
+    state.selectedDay=0;
+    save();render();
+  }
+}
+
+document.getElementById("splash-year").textContent = "Built by Mohanoor Technologies · © " + new Date().getFullYear();
+
+// Register Service Worker for offline support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    // Inline service worker as blob URL
+    const swCode = `
+const CACHE = 'sitelogic-v1';
+const ASSETS = [self.location.href];
+
+self.addEventListener('install', e => {
+  e.waitUntil(
+    caches.open(CACHE).then(cache => cache.addAll(ASSETS))
+  );
+  self.skipWaiting();
+});
+
+self.addEventListener('activate', e => {
+  e.waitUntil(
+    caches.keys().then(keys =>
+      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
+    )
+  );
+  self.clients.claim();
+});
+
+self.addEventListener('fetch', e => {
+  // Only cache same-origin requests, not API calls
+  if (e.request.url.includes('anthropic.com') || e.request.url.includes('wa.me') || e.request.url.includes('fonts.googleapis')) {
+    return;
+  }
+  e.respondWith(
+    caches.match(e.request).then(cached => {
+      if (cached) return cached;
+      return fetch(e.request).then(response => {
+        if (!response || response.status !== 200) return response;
+        const clone = response.clone();
+        caches.open(CACHE).then(cache => cache.put(e.request, clone));
+        return response;
+      }).catch(() => cached);
+    })
+  );
+});`;
+    const blob = new Blob([swCode], {type: 'application/javascript'});
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl).catch(() => {});
+  });
+}
+
+load();render();
+// Remove splash from DOM after animation completes
+setTimeout(() => {
+  const splash = document.getElementById('splash');
+  if (splash) splash.remove();
+}, 3700);
+</script>
+</body>
+</html>
